@@ -170,64 +170,68 @@ nav a:hover { color: var(--text); }
 .stat-val  { font-size: 32px; font-weight: 600; line-height: 1; margin-bottom: 6px; }
 .stat-lbl  { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.4; }
 
-/* ───── CONCEPT 2-COL ───── */
-.concept-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+/* ───── CONCEPT LAYOUT ───── */
+.concept-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 48px; }
 .concept-text p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.75; margin-bottom: 16px; }
 .concept-text p strong { color: var(--text); font-weight: 500; }
-
-/* ───── MACHINE OF STATES FLOW ───── */
-.flow-wrap {
+.concept-highlight {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 24px 20px;
+  border-radius: var(--radius); padding: 24px 22px;
+  display: flex; flex-direction: column; gap: 12px; align-self: start;
 }
-.flow-title { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 16px; text-align: center; }
-.flow-state {
-  border-radius: var(--radius-sm); border: 1.5px solid;
-  padding: 10px 14px; cursor: pointer;
-  transition: transform var(--trans), box-shadow var(--trans);
-  position: relative;
-}
-.flow-state:hover { transform: translateX(3px); box-shadow: 0 2px 12px rgba(0,0,0,.08); }
-.flow-state-num  { font-family: var(--mono); font-size: 9px; letter-spacing: .06em; opacity: .6; margin-bottom: 2px; }
-.flow-state-name { font-size: 11px; font-weight: 600; font-family: var(--mono); }
-.flow-state-sub  { font-size: 10px; opacity: .7; margin-top: 2px; }
-.flow-state.focus { box-shadow: 0 0 0 2.5px var(--sbf); }
+.concept-highlight-title { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 4px; }
+.ch-item { display: flex; gap: 10px; align-items: flex-start; }
+.ch-bar { width: 3px; border-radius: 2px; flex-shrink: 0; margin-top: 4px; align-self: stretch; }
+.ch-text { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.6; }
+.ch-text strong { color: var(--text); font-weight: 500; }
 
-.flow-conn { display: flex; flex-direction: column; align-items: flex-start; padding-left: 20px; margin: 3px 0; }
-.flow-conn-line { width: 1px; height: 16px; background: var(--border-s); }
-.flow-conn-lbl  { font-family: var(--mono); font-size: 9px; color: var(--faint); letter-spacing: .04em; margin-top: -2px; }
-
-.flow-prep {
-  border: 1.5px dashed var(--border-s); border-radius: var(--radius-sm);
-  padding: 12px; margin: 3px 0; position: relative;
-  background: rgba(26,86,204,.03);
+/* ───── LINK CARD — máquina de estados ───── */
+.flow-link-card {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 32px;
+  text-decoration: none; color: inherit;
+  transition: border-color var(--trans), transform var(--trans), box-shadow var(--trans);
+  cursor: pointer;
 }
-.flow-prep-label {
-  position: absolute; top: -9px; left: 12px;
-  background: var(--surface); padding: 0 5px;
+.flow-link-card:hover {
+  border-color: var(--sbf);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(232,93,0,.08);
+}
+.flow-link-left { display: flex; align-items: center; gap: 18px; }
+.flow-link-icon {
+  width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+  background: var(--sbf-light); border: 1px solid var(--sbf-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--sbf);
+}
+.flow-link-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.flow-link-desc  { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.55; max-width: 480px; }
+.flow-link-states {
+  display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px;
+}
+.flow-link-state {
   font-family: var(--mono); font-size: 9px; font-weight: 500;
-  color: var(--s-blue); letter-spacing: .06em; text-transform: uppercase;
+  border-radius: 4px; padding: 2px 7px; border: 1px solid;
 }
-.flow-prep-sub { font-size: 9px; color: var(--faint); text-align: center; margin-bottom: 8px; margin-top: 4px; }
-.flow-prep-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-bottom: 8px; }
-.flow-mini {
-  border-radius: 5px; border: 1px solid var(--s-blue-bg);
-  background: var(--s-blue-bg); padding: 6px 7px; cursor: pointer;
-  transition: border-color var(--trans);
+.flow-link-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0;
 }
-.flow-mini:hover { border-color: var(--s-blue); }
-.flow-mini-name { font-size: 9px; font-weight: 600; color: var(--s-blue); font-family: var(--mono); }
-.flow-mini-sub  { font-size: 8px; color: #1A56CC88; margin-top: 1px; }
-
-.flow-special {
-  border-radius: 5px; border: 1.5px solid var(--s-coral-bg);
-  background: var(--s-coral-bg); padding: 6px 8px; cursor: pointer;
-  transition: border-color var(--trans);
+.flow-link-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--sbf); color: #fff;
+  border-radius: var(--radius-sm); padding: 9px 18px;
+  font-size: 13px; font-weight: 600; white-space: nowrap;
+  border: none; cursor: pointer; font-family: var(--font);
+  transition: opacity var(--trans);
 }
-.flow-special:hover { border-color: var(--s-coral); }
-.flow-special-name { font-size: 9px; font-weight: 600; color: var(--s-coral); font-family: var(--mono); }
-.flow-special-sub  { font-size: 8px; color: #BF360C88; margin-top: 1px; }
-.flow-special-badge { font-size: 8px; background: var(--s-coral); color: #fff; border-radius: 3px; padding: 1px 4px; display: inline-block; margin-top: 2px; }
+.flow-link-btn:hover { opacity: .88; }
+.flow-link-tag {
+  font-family: var(--mono); font-size: 10px; color: var(--faint);
+  letter-spacing: .05em;
+}
 
 /* ───── STRATEGY — BU SIDE BY SIDE ───── */
 .bu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; }
@@ -451,76 +455,52 @@ footer {
     <h2 class="title">Ciclo de vida e<br><span>máquina de estados.</span></h2>
     <p class="lead">Dois conceitos complementares. O ciclo de vida define o que acontece com um produto do nascimento ao arquivamento. A máquina de estados torna esse ciclo visível, controlável e automatizável.</p>
   </div>
-  <div class="concept-layout reveal">
+  <!-- Intro 2 colunas -->
+  <div class="concept-intro reveal">
     <div class="concept-text">
       <p><strong>Ciclo de vida dos produtos</strong> é o conjunto de etapas que um produto percorre desde a negociação comercial até ser retirado do catálogo digital. Cada etapa tem um responsável, um critério de entrada e uma condição de saída.</p>
       <p><strong>Máquina de estados</strong> é o método de materialização e monitoria. Em vez de planilhas e relatórios manuais, cada produto tem um estado atual — preciso, rastreável e atualizado automaticamente conforme avança ou trava no ciclo.</p>
-      <p>O resultado é <strong>visibilidade total em tempo real</strong>: qualquer pessoa sabe onde cada produto está, por que está travado e qual time precisa agir — sem abrir vários sistemas.</p>
-      <p>Em <strong>Centauro</strong>, esse modelo está em execução avançada na etapa de Disponibilidade Digital. <strong>Fisia</strong> inicia em junho ou após a conclusão dessa etapa em Centauro, aproveitando todo o modelo já validado.</p>
     </div>
-    <div>
-      <div class="flow-wrap">
-        <div class="flow-title">Máquina de estados — fluxo completo</div>
-
-        <div class="flow-state" style="background:var(--s-teal-bg);border-color:var(--s-teal)">
-          <div class="flow-state-num">Estado 1</div>
-          <div class="flow-state-name" style="color:var(--s-teal)">EM_CADASTRO_COMERCIAL</div>
-          <div class="flow-state-sub" style="color:var(--s-teal)">Cadastro SAP pendente · Responsável: Comercial</div>
-        </div>
-        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ automática</div></div>
-
-        <div class="flow-state" style="background:var(--s-teal-bg);border-color:var(--s-teal)">
-          <div class="flow-state-num">Estado 2</div>
-          <div class="flow-state-name" style="color:var(--s-teal)">EM_CADASTRO_DIGITAL</div>
-          <div class="flow-state-sub" style="color:var(--s-teal)">Ficha digital básica criada · Automático</div>
-        </div>
-        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ automática</div></div>
-
-        <div class="flow-prep">
-          <span class="flow-prep-label">Estado 3 · Em preparação digital</span>
-          <div class="flow-prep-sub">três gestões em paralelo — etapa mais crítica</div>
-          <div class="flow-prep-grid">
-            <div class="flow-mini"><div class="flow-mini-name">Catálogo</div><div class="flow-mini-sub">imagens, mídia</div></div>
-            <div class="flow-mini"><div class="flow-mini-name">Preço</div><div class="flow-mini-sub">margem, política</div></div>
-            <div class="flow-mini"><div class="flow-mini-name">Estoque</div><div class="flow-mini-sub">futurável, digital</div></div>
-          </div>
-          <div class="flow-special">
-            <div class="flow-special-name">BLOQUEADO_MARGEM_SEGURANÇA</div>
-            <div class="flow-special-sub">Estoque físico &gt; 0, digital = 0</div>
-            <span class="flow-special-badge">regra especial</span>
-          </div>
-        </div>
-        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual + automática</div></div>
-
-        <div class="flow-state focus" style="background:var(--s-green-bg);border-color:var(--s-green)">
-          <div class="flow-state-num">Estado 4 · FOCO ATUAL</div>
-          <div class="flow-state-name" style="color:var(--s-green)">DISPONÍVEL_VENDA_DIGITAL</div>
-          <div class="flow-state-sub" style="color:var(--s-green)">Visível e vendável no site · Épico em execução</div>
-        </div>
-        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual</div></div>
-
-        <div class="flow-state" style="background:var(--s-amber-bg);border-color:var(--s-amber)">
-          <div class="flow-state-num">Estado 5</div>
-          <div class="flow-state-name" style="color:var(--s-amber)">EM_PROMOÇÃO</div>
-          <div class="flow-state-sub" style="color:var(--s-amber)">Campanhas / liquidação · Manual</div>
-        </div>
-        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual</div></div>
-
-        <div class="flow-state" style="background:var(--s-red-bg);border-color:var(--s-red)">
-          <div class="flow-state-num">Estado 6</div>
-          <div class="flow-state-name" style="color:var(--s-red)">EM_BLOQUEIO_COMERCIAL</div>
-          <div class="flow-state-sub" style="color:var(--s-red)">Risco / compliance · Manual</div>
-        </div>
-        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual / automática</div></div>
-
-        <div class="flow-state" style="background:var(--s-gray-bg);border-color:var(--s-gray)">
-          <div class="flow-state-num">Estado 7</div>
-          <div class="flow-state-name" style="color:var(--s-gray)">DESATIVADO / ARQUIVADO</div>
-          <div class="flow-state-sub" style="color:var(--s-gray)">Após consumo total do estoque</div>
-        </div>
+    <div class="concept-highlight">
+      <div class="concept-highlight-title">O que muda na prática</div>
+      <div class="ch-item">
+        <div class="ch-bar" style="background:var(--s-teal)"></div>
+        <div class="ch-text">Qualquer pessoa sabe onde cada produto está, por que está travado e qual time precisa agir — <strong>sem abrir vários sistemas</strong>.</div>
+      </div>
+      <div class="ch-item">
+        <div class="ch-bar" style="background:var(--cen)"></div>
+        <div class="ch-text"><strong>Centauro</strong> está em execução avançada na etapa de Disponibilidade Digital.</div>
+      </div>
+      <div class="ch-item">
+        <div class="ch-bar" style="background:var(--fis)"></div>
+        <div class="ch-text"><strong>Fisia</strong> inicia em junho/2026, aproveitando todo o modelo já validado em Centauro.</div>
       </div>
     </div>
   </div>
+
+  <!-- Card de link para a máquina de estados -->
+  <a class="flow-link-card reveal" href="maquina-estados-produto.html" target="_blank">
+    <div class="flow-link-left">
+      <div class="flow-link-icon">&#9671;</div>
+      <div>
+        <div class="flow-link-title">Ver fluxo completo — máquina de estados interativa</div>
+        <div class="flow-link-desc">Os 7 estados do ciclo de vida com transições, sub-estados, área responsável e sinais de alerta. Clique em qualquer estado para ver os detalhes completos.</div>
+        <div class="flow-link-states">
+          <span class="flow-link-state" style="background:var(--s-teal-bg);border-color:var(--s-teal);color:var(--s-teal)">1 · Cadastro comercial</span>
+          <span class="flow-link-state" style="background:var(--s-teal-bg);border-color:var(--s-teal);color:var(--s-teal)">2 · Cadastro digital</span>
+          <span class="flow-link-state" style="background:var(--s-blue-bg);border-color:var(--s-blue);color:var(--s-blue)">3 · Preparação digital</span>
+          <span class="flow-link-state" style="background:var(--s-green-bg);border-color:var(--s-green);color:var(--s-green)">4 · Disponível ★</span>
+          <span class="flow-link-state" style="background:var(--s-amber-bg);border-color:var(--s-amber);color:var(--s-amber)">5 · Promoção</span>
+          <span class="flow-link-state" style="background:var(--s-red-bg);border-color:var(--s-red);color:var(--s-red)">6 · Bloqueio</span>
+          <span class="flow-link-state" style="background:var(--s-gray-bg);border-color:var(--s-gray);color:var(--s-gray)">7 · Arquivado</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-link-right">
+      <span class="flow-link-btn">Abrir fluxo →</span>
+      <span class="flow-link-tag">Abre em nova aba</span>
+    </div>
+  </a>
 </div>
 </div>
 

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jornada do Produto — Grupo SBF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F1;
+  --surface:#FFFFFF;
+  --surface2:#EEECEA;
+  --border:#E0DDD8;
+  --border-s:#C8C5BE;
+  --text:#1C1B19;
+  --muted:#6B6760;
+  --faint:#A09D98;
+  --sbf:#E85D00;
+  --sbf-light:#FFF0E8;
+  --sbf-border:#F5A070;
+  --success:#2E7D32;
+  --success-bg:#E8F5E9;
+  --success-border:#81C784;
+  --font:'Sora',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --radius:12px;
+  --radius-sm:8px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+nav{
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:56px;position:sticky;top:0;z-index:100;
+}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:30px;height:30px;border-radius:7px;background:var(--sbf);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff}
+.nav-title{font-size:13px;font-weight:600;color:var(--text)}
+.nav-sub{font-size:11px;color:var(--faint)}
+.nav-back{font-size:12px;color:var(--muted);text-decoration:none;font-weight:500;display:flex;align-items:center;gap:5px;transition:color .15s}
+.nav-back:hover{color:var(--text)}
+
+main{flex:1;max-width:960px;margin:0 auto;width:100%;padding:48px 32px}
+
+.page-header{margin-bottom:36px}
+.page-eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--sbf);margin-bottom:10px}
+.page-title{font-size:clamp(24px,3.5vw,38px);font-weight:600;letter-spacing:-.03em;line-height:1.1;color:var(--text);margin-bottom:10px}
+.page-title span{color:var(--sbf)}
+.page-sub{font-size:15px;font-weight:300;color:var(--muted);line-height:1.65;max-width:560px}
+
+.controls{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.btn{padding:7px 18px;font-size:13px;font-weight:500;border-radius:var(--radius-sm);border:1px solid var(--border-s);background:var(--surface);color:var(--text);cursor:pointer;transition:background .15s,transform .1s;font-family:var(--font)}
+.btn:hover{background:var(--surface2)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-auto{padding:7px 14px;font-size:12px;border-radius:var(--radius-sm);border:1px solid var(--border-s);background:transparent;color:var(--muted);cursor:pointer;transition:background .15s;font-family:var(--font)}
+.btn-auto:hover{background:var(--surface2)}
+.btn-auto.running{border-color:#2E7D32;color:#2E7D32}
+.step-dots{display:flex;gap:6px;align-items:center;margin-left:auto}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border-s);transition:background .3s,transform .3s}
+.dot.active{transform:scale(1.5)}
+
+.progress-wrap{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:24px}
+.progress-bar{height:100%;border-radius:2px;transition:width .5s ease,background .4s;background:var(--sbf)}
+
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+
+.product-card{
+  border-radius:var(--radius);border:1.5px solid var(--border);
+  background:var(--surface);padding:22px;
+  min-height:360px;display:flex;flex-direction:column;gap:12px;
+  transition:border-color .4s;
+}
+.pc-header{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.pc-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1.5px solid;transition:all .4s}
+.pc-name{font-size:14px;font-weight:600;color:var(--text)}
+.pc-sku{font-size:11px;font-family:var(--mono);color:var(--faint);margin-top:2px}
+.pc-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;border-radius:20px;padding:3px 11px;border:1px solid;transition:all .4s}
+.pc-status-dot{width:6px;height:6px;border-radius:50%;transition:background .4s}
+
+.attr-list{display:flex;flex-direction:column;gap:6px;flex:1}
+.attr-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);transition:all .35s}
+.attr-row.locked{opacity:.3;filter:grayscale(1)}
+.attr-row.unlocked{opacity:1;filter:none}
+.attr-row.unlocking{animation:unlock .5s ease forwards}
+@keyframes unlock{0%{transform:translateX(-8px);opacity:.2}100%{transform:translateX(0);opacity:1}}
+.attr-icon{font-size:14px;width:20px;text-align:center;flex-shrink:0;color:var(--muted)}
+.attr-label{color:var(--muted);flex:1;font-weight:400}
+.attr-val{font-family:var(--mono);font-size:10px;color:var(--text);font-weight:500}
+.attr-check{font-size:12px;color:var(--success)}
+.attr-lock{font-size:11px;color:var(--faint)}
+
+.info-panel{display:flex;flex-direction:column;gap:14px}
+.state-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);font-weight:500;letter-spacing:.07em;text-transform:uppercase;border-radius:4px;padding:3px 9px;border:1px solid;margin-bottom:4px;transition:all .4s}
+.state-num{font-size:10px;font-family:var(--mono);color:var(--faint);margin-bottom:4px}
+.state-name{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.3}
+.state-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7}
+.state-trans{font-size:11px;font-family:var(--mono);color:var(--faint);margin-top:6px;padding:7px 11px;border-radius:6px;background:var(--surface2);border:1px solid var(--border)}
+.unlocks-section{margin-top:2px}
+.unlocks-title{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.unlock-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border);font-weight:300}
+.unlock-item:last-child{border-bottom:none}
+.unlock-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+footer{border-top:1px solid var(--border);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;background:var(--surface)}
+.ft{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.05em}
+
+@media(max-width:720px){
+  nav,footer{padding:0 20px}
+  main{padding:32px 20px}
+  .stage{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">SBF</div>
+    <div>
+      <div class="nav-title">Grupo SBF</div>
+      <div class="nav-sub">Jornada do produto</div>
+    </div>
+  </div>
+  <a class="nav-back" href="index.html">← Voltar ao índice</a>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-eyebrow">Ciclo de vida dos produtos · Animação interativa</div>
+    <h1 class="page-title">Um produto, <span>7 estados.</span></h1>
+    <p class="page-sub">Acompanhe a jornada completa de um produto — desde a negociação comercial até a venda digital — e veja cada atributo sendo desbloqueado a cada etapa.</p>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="btnPrev" onclick="go(-1)">← Anterior</button>
+    <button class="btn" id="btnNext" onclick="go(1)">Próximo →</button>
+    <button class="btn-auto" id="btnAuto" onclick="toggleAuto()">▶ Automático</button>
+    <div class="step-dots" id="dots"></div>
+  </div>
+
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="stage">
+    <div class="product-card" id="productCard">
+      <div class="pc-header">
+        <div class="pc-icon" id="pcIcon"></div>
+        <div>
+          <div class="pc-name">Tênis Runner Pro X</div>
+          <div class="pc-sku">SKU #TRP-2026-42</div>
+        </div>
+      </div>
+      <div id="pcStatus"></div>
+      <div class="attr-list" id="attrList"></div>
+    </div>
+    <div class="info-panel" id="infoPanel">
+      <div>
+        <div class="state-num" id="stateNum"></div>
+        <div id="stateBadge"></div>
+        <div class="state-name" id="stateName"></div>
+        <div class="state-desc" id="stateDesc"></div>
+        <div class="state-trans" id="stateTrans"></div>
+      </div>
+      <div class="unlocks-section" id="unlocksSection"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span class="ft">Ciclo de vida dos produtos · Grupo SBF · V1 · 2026</span>
+  <span class="ft">Uso interno · Confidencial</span>
+</footer>
+
+<script>
+const COLORS={
+  teal: {bg:'#E1F5EE',border:'#0F6E56',text:'#085041',dot:'#1D9E75'},
+  blue: {bg:'#E6F1FB',border:'#185FA5',text:'#0C447C',dot:'#378ADD'},
+  green:{bg:'#EAF3DE',border:'#3B6D11',text:'#27500A',dot:'#639922'},
+  amber:{bg:'#FAEEDA',border:'#854F0B',text:'#633806',dot:'#BA7517'},
+  red:  {bg:'#FCEBEB',border:'#A32D2D',text:'#791F1F',dot:'#E24B4A'},
+  gray: {bg:'#F1EFE8',border:'#5F5E5A',text:'#444441',dot:'#888780'},
+};
+const ATTRS=[
+  {key:'sap',    icon:'ti-database',  label:'Cadastro SAP',       val:'COD-TRP-2026'},
+  {key:'cat',    icon:'ti-category',  label:'Categoria digital',  val:'Calçados / Corrida'},
+  {key:'img',    icon:'ti-photo',     label:'Imagens',            val:'8 fotos aprovadas'},
+  {key:'desc',   icon:'ti-file-text', label:'Descrição',          val:'Completa + ficha técnica'},
+  {key:'preco',  icon:'ti-tag',       label:'Preço',              val:'R$ 349,90'},
+  {key:'estoque',icon:'ti-package',   label:'Estoque digital',    val:'142 unidades'},
+  {key:'site',   icon:'ti-world',     label:'Visível no site',    val:'centauro.com.br'},
+  {key:'promo',  icon:'ti-discount',  label:'Campanha',           val:'Sale de Inverno 2026'},
+];
+const STATES=[
+  {num:'Estado 1 de 7',name:'Em cadastro comercial',color:'teal',badge:'Automático',icon:'ti-file-invoice',desc:'O produto foi negociado e tem código comercial, mas ainda não está validado no SAP. Nenhum sistema digital sabe que ele existe.',trans:'→ Transição automática via integração SAP',unlocked:[],unlocking:['sap'],status:'Aguardando validação SAP'},
+  {num:'Estado 2 de 7',name:'Em cadastro digital',color:'teal',badge:'Automático',icon:'ti-id',desc:'O SAP reconhece o produto. A plataforma digital recebe os dados básicos e cria a ficha — mas ainda sem conteúdo ou preço.',trans:'→ Transição automática via integração ERP → plataforma',unlocked:['sap'],unlocking:['cat'],status:'Ficha digital criada'},
+  {num:'Estado 3 de 7',name:'Em preparação digital',color:'blue',badge:'Manual + Automático',icon:'ti-adjustments',desc:'Três gestões em paralelo: catálogo (imagens e descrição), preço (margem e política comercial) e estoque (futurável e margem de segurança).',trans:'→ Validações automáticas + aprovação manual',unlocked:['sap','cat'],unlocking:['img','desc','preco','estoque'],status:'Preparando — 4 pendências'},
+  {num:'Estado 4 de 7',name:'Disponível — venda digital',color:'green',badge:'Foco atual',icon:'ti-shopping-cart',desc:'Todas as validações passaram. O produto está visível no site, pode ser adicionado ao carrinho e comprado. Receita sendo gerada.',trans:'→ Desbloqueio manual pelo time comercial após validações',unlocked:['sap','cat','img','desc','preco','estoque'],unlocking:['site'],status:'Visível e vendável no site'},
+  {num:'Estado 5 de 7',name:'Em promoção',color:'amber',badge:'Manual',icon:'ti-rosette-discount',desc:'O produto foi vinculado a uma campanha ativa. Preço diferenciado e badge especial no site.',trans:'→ Ativação manual pelo time de Marketing / Comercial',unlocked:['sap','cat','img','desc','preco','estoque','site'],unlocking:['promo'],status:'Em campanha ativa'},
+  {num:'Estado 6 de 7',name:'Em bloqueio comercial',color:'red',badge:'Manual',icon:'ti-lock',desc:'Bloqueio intencional — recall, decisão comercial, risco jurídico ou compliance. Produto sai do ar, cadastro preservado.',trans:'→ Bloqueio manual com motivo obrigatório registrado',unlocked:['sap','cat','img','desc','preco','estoque'],unlocking:[],status:'Fora do ar — motivo registrado'},
+  {num:'Estado 7 de 7',name:'Desativado / Arquivado',color:'gray',badge:'Manual / Automático',icon:'ti-archive',desc:'Fim de vida do produto. Ativado somente após consumo total do estoque físico e confirmação de descontinuação.',trans:'→ Manual ou automático quando estoque zera + flag descontinuação',unlocked:['sap','cat','img','desc','preco','estoque'],unlocking:[],status:'Descontinuado — arquivado'},
+];
+let cur=0,timer=null;
+function buildDots(){
+  const c=document.getElementById('dots');c.innerHTML='';
+  STATES.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.id='dot'+i;c.appendChild(d);});
+}
+function render(idx,prev){
+  const s=STATES[idx],col=COLORS[s.color];
+  if(prev!==undefined){document.getElementById('dot'+prev).classList.remove('active');}
+  const dotEl=document.getElementById('dot'+idx);
+  dotEl.classList.add('active');dotEl.style.background=col.dot;
+  document.getElementById('progressBar').style.width=((idx+1)/STATES.length*100)+'%';
+  document.getElementById('progressBar').style.background=col.dot;
+  const card=document.getElementById('productCard');card.style.borderColor=col.border;
+  const icon=document.getElementById('pcIcon');
+  icon.style.background=col.bg;icon.style.borderColor=col.border;icon.style.color=col.text;
+  icon.innerHTML=`<i class="ti ${s.icon}" style="font-size:22px"></i>`;
+  document.getElementById('pcStatus').innerHTML=`<span class="pc-status" style="background:${col.bg};border-color:${col.border};color:${col.text}"><span class="pc-status-dot" style="background:${col.dot}"></span>${s.status}</span>`;
+  document.getElementById('attrList').innerHTML=ATTRS.map(a=>{
+    const ul=s.unlocked.includes(a.key),un=s.unlocking.includes(a.key);
+    const cls=un?'attr-row unlocked unlocking':ul?'attr-row unlocked':'attr-row locked';
+    const ri=(ul||un)?`<span class="attr-check"><i class="ti ti-check" style="font-size:12px"></i></span>`:`<span class="attr-lock"><i class="ti ti-lock" style="font-size:11px"></i></span>`;
+    const v=(ul||un)?`<span class="attr-val">${a.val}</span>`:'';
+    return`<div class="${cls}"><i class="ti ${a.icon} attr-icon"></i><span class="attr-label">${a.label}</span>${v}${ri}</div>`;
+  }).join('');
+  document.getElementById('stateNum').textContent=s.num;
+  document.getElementById('stateBadge').innerHTML=`<span class="state-badge" style="background:${col.bg};border-color:${col.border};color:${col.text}">${s.badge}</span>`;
+  document.getElementById('stateName').textContent=s.name;
+  document.getElementById('stateDesc').textContent=s.desc;
+  document.getElementById('stateTrans').textContent=s.trans;
+  const us=document.getElementById('unlocksSection');
+  if(s.unlocking.length){
+    us.innerHTML=`<div class="unlocks-title">Desbloqueado nesta etapa</div>`+s.unlocking.map(k=>{const a=ATTRS.find(x=>x.key===k);return`<div class="unlock-item"><span class="unlock-dot" style="background:${col.dot}"></span><i class="ti ${a.icon}" style="font-size:13px;color:${col.text}"></i><span>${a.label}: ${a.val}</span></div>`;}).join('');
+  }else{us.innerHTML='';}
+  document.getElementById('btnPrev').disabled=idx===0;
+  document.getElementById('btnNext').disabled=idx===STATES.length-1;
+}
+function go(dir){const p=cur;cur=Math.max(0,Math.min(STATES.length-1,cur+dir));render(cur,p);}
+function toggleAuto(){
+  const btn=document.getElementById('btnAuto');
+  if(timer){clearInterval(timer);timer=null;btn.textContent='▶ Automático';btn.classList.remove('running');}
+  else{btn.textContent='■ Pausar';btn.classList.add('running');timer=setInterval(()=>{if(cur>=STATES.length-1){cur=0;render(0,STATES.length-1);}else go(1);},2400);}
+}
+buildDots();render(0,0);
+</script>
+</body>
+</html>

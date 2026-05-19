@@ -1,12 +1,173 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8">
-<title>Grupo SBF — Ciclo de Vida</title>
-<style>body{font-family:sans-serif;max-width:600px;margin:80px auto;padding:0 24px}
-a{display:block;padding:14px 18px;margin:10px 0;border:1px solid #ddd;border-radius:8px;text-decoration:none;color:#1a1a18;font-size:15px}
-a:hover{background:#f5f4f1}</style></head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo SBF — Ciclo de Vida dos Produtos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F1;--surface:#FFFFFF;--surface2:#EEECEA;
+  --border:#E0DDD8;--border-s:#C8C5BE;
+  --text:#1C1B19;--muted:#6B6760;--faint:#A09D98;
+  --sbf:#E85D00;--sbf-light:#FFF0E8;--sbf-border:#F5A070;
+  --cen:#E85D00;--cen-light:#FFF0E8;--cen-border:#F5A070;
+  --fis:#1A56CC;--fis-light:#EBF1FD;--fis-border:#7AAAF0;
+  --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  --radius:14px;--radius-sm:8px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+nav{
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:58px;
+}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:32px;height:32px;border-radius:8px;background:var(--sbf);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:600;color:#fff}
+.nav-title{font-size:14px;font-weight:600;color:var(--text)}
+.nav-sub{font-size:11px;color:var(--faint)}
+.nav-date{font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+main{flex:1;max-width:900px;margin:0 auto;width:100%;padding:64px 40px}
+
+.hero{margin-bottom:52px}
+.hero-eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--sbf);margin-bottom:12px}
+.hero-title{font-size:clamp(28px,4vw,46px);font-weight:600;letter-spacing:-.03em;line-height:1.08;color:var(--text);margin-bottom:14px}
+.hero-title span{color:var(--sbf)}
+.hero-sub{font-size:15px;font-weight:300;color:var(--muted);line-height:1.7;max-width:540px;margin-bottom:28px}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);font-weight:500;border-radius:20px;padding:3px 11px;border:1px solid}
+
+.section-label{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:40px}
+.card{
+  display:flex;flex-direction:column;gap:12px;
+  background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);
+  padding:24px 22px;text-decoration:none;color:inherit;
+  transition:border-color .18s,transform .18s,box-shadow .18s;cursor:pointer;
+}
+.card:hover{border-color:var(--border-s);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.07)}
+.card-icon-row{display:flex;align-items:center;justify-content:space-between}
+.card-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid}
+.card-arrow{font-size:18px;color:var(--faint);transition:transform .18s,color .18s}
+.card:hover .card-arrow{transform:translateX(3px);color:var(--text)}
+.card-title{font-size:15px;font-weight:600;color:var(--text);line-height:1.25}
+.card-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6;flex:1}
+.card-tag{font-family:var(--mono);font-size:10px;font-weight:500;border-radius:4px;padding:2px 8px;border:1px solid;display:inline-flex;align-self:flex-start;margin-top:4px}
+
+.card-wide{grid-column:1/-1}
+
+.bu-strip{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:52px}
+.bu-card{border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);padding:16px 18px}
+.bu-hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bu-badge{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:600;color:#fff}
+.bu-name{font-size:13px;font-weight:600}
+.bu-status{font-size:11px;font-weight:300;color:var(--muted);line-height:1.5}
+.bu-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--mono);font-weight:500;border-radius:20px;padding:2px 9px;border:1px solid;margin-top:8px}
+.bu-dot{width:5px;height:5px;border-radius:50%}
+
+footer{border-top:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;background:var(--surface)}
+.ft{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.05em}
+
+@media(max-width:720px){
+  nav,footer{padding:0 20px}
+  main{padding:40px 20px}
+  .card-grid,.bu-strip{grid-template-columns:1fr}
+  .card-wide{grid-column:auto}
+}
+</style>
+</head>
 <body>
-<h2 style="margin-bottom:24px">Grupo SBF · Ciclo de vida dos produtos</h2>
-<a href="apresentacao-ciclo-vida-sbf.html">Apresentação principal (Grupo SBF)</a>
-<a href="maquina-estados-produto.html">Máquina de estados interativa</a>
-</body></html>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">SBF</div>
+    <div>
+      <div class="nav-title">Grupo SBF</div>
+      <div class="nav-sub">Ciclo de vida dos produtos</div>
+    </div>
+  </div>
+  <span class="nav-date">2026 · Uso interno</span>
+</nav>
+
+<main>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Iniciativa estratégica · Produto Digital</div>
+    <h1 class="hero-title">Ciclo de vida<br>dos <span>produtos.</span></h1>
+    <p class="hero-sub">Visibilidade completa e em tempo real de cada produto — do cadastro comercial até a vitrine digital. Uma estratégia, dois momentos: Centauro em execução, Fisia a partir de junho/2026.</p>
+    <div class="hero-pills">
+      <span class="pill" style="background:var(--sbf-light);border-color:var(--sbf-border);color:var(--sbf)">Máquina de estados</span>
+      <span class="pill" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)"><span class="bu-dot" style="background:var(--cen)"></span>Centauro · Em execução</span>
+      <span class="pill" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)"><span class="bu-dot" style="background:var(--fis)"></span>Fisia · Jun / 2026</span>
+    </div>
+  </div>
+
+  <div class="section-label">Conteúdos disponíveis</div>
+  <div class="card-grid">
+
+    <a class="card card-wide" href="apresentacao-ciclo-vida-sbf.html">
+      <div class="card-icon-row">
+        <div class="card-icon" style="background:var(--sbf-light);border-color:var(--sbf-border);color:var(--sbf)">&#9654;</div>
+        <span class="card-arrow">→</span>
+      </div>
+      <div class="card-title">Apresentação estratégica</div>
+      <div class="card-desc">Narrativa completa do ciclo de vida para liderança e times — problema, conceito, estratégia Centauro × Fisia, plano com épico e 5 histórias, e resultados esperados.</div>
+      <span class="card-tag" style="background:var(--sbf-light);border-color:var(--sbf-border);color:var(--sbf)">Apresentação principal · Grupo SBF</span>
+    </a>
+
+    <a class="card" href="maquina-estados-produto.html">
+      <div class="card-icon-row">
+        <div class="card-icon" style="background:#EBF1FD;border-color:#7AAAF0;color:#1A56CC">&#9671;</div>
+        <span class="card-arrow">→</span>
+      </div>
+      <div class="card-title">Máquina de estados interativa</div>
+      <div class="card-desc">Fluxo completo dos 7 estados — clique em qualquer estado para ver detalhes, responsáveis, sub-estados e sinais de alerta.</div>
+      <span class="card-tag" style="background:#EBF1FD;border-color:#7AAAF0;color:#1A56CC">Referência técnica · Clicável</span>
+    </a>
+
+    <a class="card" href="jornada-produto-standalone.html">
+      <div class="card-icon-row">
+        <div class="card-icon" style="background:#EAF3DE;border-color:#81C784;color:#2E7D32">&#9654;</div>
+        <span class="card-arrow">→</span>
+      </div>
+      <div class="card-title">Jornada do produto animada</div>
+      <div class="card-desc">Acompanhe um produto passando pelos 7 estados em tempo real — cada atributo (imagem, preço, estoque, site) desbloqueando a cada etapa. Manual ou automático.</div>
+      <span class="card-tag" style="background:#EAF3DE;border-color:#81C784;color:#2E7D32">Animação interativa · 7 etapas</span>
+    </a>
+
+  </div>
+
+  <div class="section-label">Unidades de negócio</div>
+  <div class="bu-strip">
+    <div class="bu-card">
+      <div class="bu-hd">
+        <div class="bu-badge" style="background:var(--cen)">CEN</div>
+        <div class="bu-name" style="color:var(--cen)">Centauro</div>
+      </div>
+      <div class="bu-status">Maior varejista esportiva multimarcas da América Latina. Disponibilidade Venda Digital com 5 histórias em andamento avançado.</div>
+      <span class="bu-pill" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)"><span class="bu-dot" style="background:var(--cen)"></span>Em execução · V1</span>
+    </div>
+    <div class="bu-card">
+      <div class="bu-hd">
+        <div class="bu-badge" style="background:var(--fis)">FIS</div>
+        <div class="bu-name" style="color:var(--fis)">Fisia</div>
+      </div>
+      <div class="bu-status">Distribuidora oficial da Nike no Brasil. Inicia após conclusão do V1 de Centauro — mesma estratégia, modelo já validado.</div>
+      <span class="bu-pill" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)"><span class="bu-dot" style="background:var(--fis)"></span>Início jun/2026</span>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span class="ft">Grupo SBF · Ciclo de vida dos produtos · V1 · mai/2026</span>
+  <span class="ft">Confidencial · Uso interno</span>
+</footer>
+</body>
+</html>
