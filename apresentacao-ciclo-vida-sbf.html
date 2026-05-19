@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ciclo de Vida dos Produtos — Grupo SBF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #F5F4F1;
+  --surface:   #FFFFFF;
+  --surface2:  #EEECEA;
+  --border:    #E0DDD8;
+  --border-s:  #C8C5BE;
+  --text:      #1C1B19;
+  --muted:     #6B6760;
+  --faint:     #A09D98;
+
+  /* SBF Holding */
+  --sbf:       #E85D00;
+  --sbf-light: #FFF0E8;
+  --sbf-border:#F5A070;
+
+  /* Centauro */
+  --cen:       #E85D00;
+  --cen-light: #FFF0E8;
+  --cen-border:#F5A070;
+
+  /* Fisia / Nike */
+  --fis:       #1A56CC;
+  --fis-light: #EBF1FD;
+  --fis-border:#7AAAF0;
+
+  /* States */
+  --s-teal:    #0D7A5F;
+  --s-teal-bg: #E6F5F0;
+  --s-blue:    #1A56CC;
+  --s-blue-bg: #EBF1FD;
+  --s-green:   #2E7D32;
+  --s-green-bg:#E8F5E9;
+  --s-amber:   #B45309;
+  --s-amber-bg:#FEF3C7;
+  --s-red:     #C62828;
+  --s-red-bg:  #FDECEA;
+  --s-gray:    #546E7A;
+  --s-gray-bg: #ECEFF1;
+  --s-coral:   #BF360C;
+  --s-coral-bg:#FBE9E7;
+
+  --radius:    12px;
+  --radius-sm: 8px;
+  --font:      'Sora', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+  --trans:     .2s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 16px; font-weight: 400; line-height: 1.6; }
+
+/* ───── NAV ───── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 58px;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-logo {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--sbf);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; font-weight: 500; color: #fff;
+}
+.nav-name { font-size: 13px; font-weight: 600; letter-spacing: -.01em; }
+.nav-sub  { font-size: 11px; color: var(--muted); }
+nav ul { display: flex; gap: 28px; list-style: none; }
+nav a { font-size: 12px; color: var(--muted); text-decoration: none; font-weight: 500; transition: color var(--trans); }
+nav a:hover { color: var(--text); }
+.nav-date { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+/* ───── SECTION WRAPPER ───── */
+.section { max-width: 1080px; margin: 0 auto; padding: 80px 40px; }
+.section-full { padding: 80px 40px; }
+.divider { border: none; border-top: 1px solid var(--border); }
+
+/* ───── EYEBROW / TITLE ───── */
+.eyebrow {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--sbf); margin-bottom: 12px;
+}
+.eyebrow.blue  { color: var(--fis); }
+.title {
+  font-size: clamp(28px, 4vw, 46px); font-weight: 600;
+  letter-spacing: -.03em; line-height: 1.1;
+  color: var(--text); margin-bottom: 16px;
+}
+.title span { color: var(--sbf); }
+.lead {
+  font-size: 16px; font-weight: 300; color: var(--muted);
+  line-height: 1.7; max-width: 620px; margin-bottom: 48px;
+}
+
+/* ───── HERO ───── */
+#hero {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 0 0 0;
+  position: relative; overflow: hidden;
+}
+.hero-inner {
+  max-width: 1080px; margin: 0 auto;
+  padding: 80px 40px 64px;
+  display: grid; grid-template-columns: 1fr 340px; gap: 64px; align-items: end;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  background: var(--sbf-light); color: var(--sbf);
+  border: 1px solid var(--sbf-border);
+  border-radius: 20px; padding: 4px 12px; margin-bottom: 20px;
+}
+.hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sbf); }
+.hero-title {
+  font-size: clamp(36px, 5.5vw, 64px); font-weight: 600;
+  letter-spacing: -.04em; line-height: 1.05;
+  color: var(--text); margin-bottom: 20px;
+}
+.hero-title span { color: var(--sbf); }
+.hero-sub { font-size: 16px; font-weight: 300; color: var(--muted); line-height: 1.7; max-width: 520px; margin-bottom: 40px; }
+.hero-meta { display: flex; gap: 32px; flex-wrap: wrap; }
+.hm-item { display: flex; flex-direction: column; gap: 3px; }
+.hm-label { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.hm-val   { font-size: 13px; font-weight: 500; color: var(--text); }
+
+/* Hero BU cards */
+.hero-bu-stack { display: flex; flex-direction: column; gap: 12px; align-self: start; padding-top: 24px; }
+.bu-card {
+  border-radius: var(--radius); border: 1px solid var(--border);
+  background: var(--bg); padding: 16px 18px;
+}
+.bu-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.bu-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; font-weight: 500; color: #fff;
+}
+.bu-name  { font-size: 13px; font-weight: 600; }
+.bu-role  { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.bu-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  border-radius: 20px; padding: 2px 8px; border: 1px solid; margin-top: 8px;
+}
+
+/* ───── PROBLEM CARDS ───── */
+.prob-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 40px; }
+.prob-card { background: var(--surface); padding: 28px 24px; }
+.prob-num  { font-family: var(--mono); font-size: 36px; color: var(--sbf); opacity: .25; line-height: 1; margin-bottom: 12px; }
+.prob-title{ font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.prob-text { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.6; }
+
+.stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; background: var(--border); border-radius: var(--radius); overflow: hidden; }
+.stat-card { background: var(--surface); padding: 22px 20px; }
+.stat-val  { font-size: 32px; font-weight: 600; line-height: 1; margin-bottom: 6px; }
+.stat-lbl  { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.4; }
+
+/* ───── CONCEPT 2-COL ───── */
+.concept-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.concept-text p { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.75; margin-bottom: 16px; }
+.concept-text p strong { color: var(--text); font-weight: 500; }
+
+/* ───── MACHINE OF STATES FLOW ───── */
+.flow-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 20px;
+}
+.flow-title { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 16px; text-align: center; }
+.flow-state {
+  border-radius: var(--radius-sm); border: 1.5px solid;
+  padding: 10px 14px; cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans);
+  position: relative;
+}
+.flow-state:hover { transform: translateX(3px); box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+.flow-state-num  { font-family: var(--mono); font-size: 9px; letter-spacing: .06em; opacity: .6; margin-bottom: 2px; }
+.flow-state-name { font-size: 11px; font-weight: 600; font-family: var(--mono); }
+.flow-state-sub  { font-size: 10px; opacity: .7; margin-top: 2px; }
+.flow-state.focus { box-shadow: 0 0 0 2.5px var(--sbf); }
+
+.flow-conn { display: flex; flex-direction: column; align-items: flex-start; padding-left: 20px; margin: 3px 0; }
+.flow-conn-line { width: 1px; height: 16px; background: var(--border-s); }
+.flow-conn-lbl  { font-family: var(--mono); font-size: 9px; color: var(--faint); letter-spacing: .04em; margin-top: -2px; }
+
+.flow-prep {
+  border: 1.5px dashed var(--border-s); border-radius: var(--radius-sm);
+  padding: 12px; margin: 3px 0; position: relative;
+  background: rgba(26,86,204,.03);
+}
+.flow-prep-label {
+  position: absolute; top: -9px; left: 12px;
+  background: var(--surface); padding: 0 5px;
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  color: var(--s-blue); letter-spacing: .06em; text-transform: uppercase;
+}
+.flow-prep-sub { font-size: 9px; color: var(--faint); text-align: center; margin-bottom: 8px; margin-top: 4px; }
+.flow-prep-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-bottom: 8px; }
+.flow-mini {
+  border-radius: 5px; border: 1px solid var(--s-blue-bg);
+  background: var(--s-blue-bg); padding: 6px 7px; cursor: pointer;
+  transition: border-color var(--trans);
+}
+.flow-mini:hover { border-color: var(--s-blue); }
+.flow-mini-name { font-size: 9px; font-weight: 600; color: var(--s-blue); font-family: var(--mono); }
+.flow-mini-sub  { font-size: 8px; color: #1A56CC88; margin-top: 1px; }
+
+.flow-special {
+  border-radius: 5px; border: 1.5px solid var(--s-coral-bg);
+  background: var(--s-coral-bg); padding: 6px 8px; cursor: pointer;
+  transition: border-color var(--trans);
+}
+.flow-special:hover { border-color: var(--s-coral); }
+.flow-special-name { font-size: 9px; font-weight: 600; color: var(--s-coral); font-family: var(--mono); }
+.flow-special-sub  { font-size: 8px; color: #BF360C88; margin-top: 1px; }
+.flow-special-badge { font-size: 8px; background: var(--s-coral); color: #fff; border-radius: 3px; padding: 1px 4px; display: inline-block; margin-top: 2px; }
+
+/* ───── STRATEGY — BU SIDE BY SIDE ───── */
+.bu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; }
+.bu-col  { background: var(--surface); padding: 28px 26px; }
+.bu-col-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.bu-col-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 600; color: #fff; }
+.bu-col-name { font-size: 16px; font-weight: 600; }
+.bu-col-status { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.bu-item { display: flex; gap: 8px; margin-bottom: 12px; align-items: flex-start; }
+.bu-item-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+.bu-item-text { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.55; }
+.bu-item-text strong { color: var(--text); font-weight: 500; }
+
+.principle-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 40px; }
+.pr-item { background: var(--surface2); padding: 22px 20px; }
+.pr-bar  { height: 3px; border-radius: 2px; width: 28px; margin-bottom: 14px; }
+.pr-title{ font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.pr-text { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.55; }
+
+/* ───── TIMELINE / ROADMAP ───── */
+.timeline { position: relative; margin-bottom: 40px; }
+.tl-line {
+  position: absolute; left: 130px; top: 0; bottom: 0;
+  width: 1px; background: var(--border);
+}
+.tl-row {
+  display: grid; grid-template-columns: 130px 1fr;
+  gap: 0; margin-bottom: 0; position: relative;
+}
+.tl-label { padding: 20px 20px 20px 0; text-align: right; }
+.tl-label-text { font-family: var(--mono); font-size: 10px; color: var(--faint); letter-spacing: .06em; text-transform: uppercase; }
+.tl-label-date { font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+.tl-content { padding: 16px 0 16px 28px; border-bottom: 1px solid var(--border); }
+.tl-row:last-child .tl-content { border-bottom: none; }
+.tl-dot {
+  position: absolute; left: 124px; top: 24px;
+  width: 13px; height: 13px; border-radius: 50%;
+  border: 2px solid var(--surface); z-index: 1;
+}
+.tl-epico { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.tl-desc  { font-size: 12px; font-weight: 300; color: var(--muted); margin-bottom: 10px; }
+.tl-tags  { display: flex; flex-wrap: wrap; gap: 6px; }
+.tl-tag   {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  border-radius: 4px; padding: 2px 8px; border: 1px solid;
+}
+.tl-bu-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.tl-bu-chip {
+  font-size: 11px; padding: 3px 10px; border-radius: 20px;
+  border: 1px solid; font-weight: 500;
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* ───── EPICO STORIES ───── */
+.stories-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 40px; }
+.stories-header { background: var(--surface2); padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.stories-header-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.stories-header-desc  { font-size: 12px; font-weight: 300; color: var(--muted); }
+.stories-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+.story {
+  padding: 18px 20px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.story:nth-child(3n) { border-right: none; }
+.story:nth-child(4), .story:nth-child(5) { border-bottom: none; }
+.story-num   { font-family: var(--mono); font-size: 9px; color: var(--faint); margin-bottom: 5px; letter-spacing: .06em; }
+.story-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
+.story-desc  { font-size: 11px; font-weight: 300; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+.story-tag   { font-family: var(--mono); font-size: 9px; border-radius: 3px; padding: 2px 6px; border: 1px solid; display: inline-flex; }
+
+/* ───── KPI GRID ───── */
+.kpi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--border); border-radius: var(--radius); overflow: hidden; }
+.kpi-card { background: var(--surface); padding: 24px 20px; }
+.kpi-val  { font-size: 28px; font-weight: 600; color: var(--sbf); line-height: 1; margin-bottom: 6px; }
+.kpi-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.kpi-desc { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.5; }
+
+/* ───── CLOSING ───── */
+#closing {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 80px 40px;
+  text-align: center;
+}
+.closing-inner { max-width: 640px; margin: 0 auto; }
+.closing-title { font-size: clamp(28px, 4vw, 44px); font-weight: 600; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 16px; }
+.closing-title span { color: var(--sbf); }
+.closing-text  { font-size: 15px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-bottom: 40px; }
+.next-steps    { display: inline-flex; flex-direction: column; gap: 10px; text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 26px; min-width: 360px; }
+.ns-label      { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 4px; }
+.ns-item       { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 300; color: var(--muted); }
+.ns-num        { font-family: var(--mono); font-size: 9px; font-weight: 500; color: var(--sbf); background: var(--sbf-light); border: 1px solid var(--sbf-border); border-radius: 3px; padding: 2px 6px; flex-shrink: 0; }
+
+/* ───── FOOTER ───── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 18px 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--surface);
+}
+.ft { font-family: var(--mono); font-size: 10px; color: var(--faint); letter-spacing: .05em; }
+
+/* ───── REVEAL ───── */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.on { opacity: 1; transform: none; }
+
+@media (max-width:860px) {
+  nav ul, .nav-date { display: none; }
+  nav { padding: 0 20px; }
+  .section, .section-full { padding: 56px 20px; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-bu-stack { display: none; }
+  .prob-grid, .stat-row, .principle-strip, .kpi-grid { grid-template-columns: 1fr; }
+  .bu-grid, .concept-layout { grid-template-columns: 1fr; }
+  .stories-grid { grid-template-columns: 1fr; }
+  .story { border-right: none; }
+  footer { padding: 16px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">SBF</div>
+    <div>
+      <div class="nav-name">Grupo SBF</div>
+      <div class="nav-sub">Ciclo de vida dos produtos</div>
+    </div>
+  </div>
+  <ul>
+    <li><a href="#problema">Problema</a></li>
+    <li><a href="#conceito">O que é</a></li>
+    <li><a href="#estrategia">Estratégia</a></li>
+    <li><a href="#plano">Plano</a></li>
+    <li><a href="#resultados">Resultados</a></li>
+  </ul>
+  <span class="nav-date">19 mai 2026</span>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><span class="hero-badge-dot"></span>Iniciativa Grupo SBF · Produto Digital</div>
+      <h1 class="hero-title">Ciclo de vida<br>dos <span>produtos.</span></h1>
+      <p class="hero-sub">Uma estratégia para garantir que todo produto com estoque disponível esteja visível, vendável e monitorado — em tempo real, com governança centralizada nas duas BUs do grupo.</p>
+      <div class="hero-meta">
+        <div class="hm-item"><span class="hm-label">Método</span><span class="hm-val">Máquina de estados</span></div>
+        <div class="hm-item"><span class="hm-label">Centauro</span><span class="hm-val">Em execução</span></div>
+        <div class="hm-item"><span class="hm-label">Fisia</span><span class="hm-val">Início jun / 2026</span></div>
+        <div class="hm-item"><span class="hm-label">Governança</span><span class="hm-val">KPIs unificados</span></div>
+      </div>
+    </div>
+    <div class="hero-bu-stack">
+      <div class="bu-card">
+        <div class="bu-card-top">
+          <div class="bu-icon" style="background:var(--cen)">CEN</div>
+          <div><div class="bu-name" style="color:var(--cen)">Centauro</div></div>
+        </div>
+        <div class="bu-role">Maior varejista esportiva multimarcas da América Latina</div>
+        <div class="bu-pill" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)"><span style="width:5px;height:5px;border-radius:50%;background:var(--cen)"></span>Disponibilidade digital em execução</div>
+      </div>
+      <div class="bu-card">
+        <div class="bu-card-top">
+          <div class="bu-icon" style="background:var(--fis)">FIS</div>
+          <div><div class="bu-name" style="color:var(--fis)">Fisia</div></div>
+        </div>
+        <div class="bu-role">Distribuidora oficial da Nike no Brasil</div>
+        <div class="bu-pill" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)"><span style="width:5px;height:5px;border-radius:50%;background:var(--fis)"></span>Início após conclusão de Centauro · jun/26</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PROBLEMA -->
+<div id="problema">
+<div class="section">
+  <div class="reveal">
+    <div class="eyebrow">01 — O problema</div>
+    <h2 class="title">Estoque disponível.<br><span>Produto fora do ar.</span></h2>
+    <p class="lead">A empresa tem produtos com estoque físico que não chegam à vitrine digital. A causa não é falta de mercadoria — é falta de visibilidade sobre onde cada produto trava e quem precisa agir.</p>
+  </div>
+  <div class="prob-grid reveal">
+    <div class="prob-card">
+      <div class="prob-num">01</div>
+      <div class="prob-title">Investigação manual e fragmentada</div>
+      <div class="prob-text">Entender por que um produto não está no site exige acessar ERP, estoque, preço e catálogo separadamente. Horas de trabalho por SKU.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-num">02</div>
+      <div class="prob-title">Sem fonte única de status</div>
+      <div class="prob-text">Não existe visão consolidada do ciclo de vida em tempo real. Cada sistema mostra um pedaço — ninguém enxerga o todo.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-num">03</div>
+      <div class="prob-title">Estoque preso por questões operacionais</div>
+      <div class="prob-text">Imagem ausente, preço não cadastrado, aprovação pendente. Problemas simples que bloqueiam receita que poderia estar sendo gerada agora.</div>
+    </div>
+  </div>
+  <div class="stat-row reveal">
+    <div class="stat-card"><div class="stat-val" style="color:var(--s-red)">~30%</div><div class="stat-lbl">dos modelos indisponíveis por regras OMS — Centauro mai/26</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--s-amber)">~5%</div><div class="stat-lbl">bloqueados apenas por falta de mídia — resolvível rapidamente</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--s-blue)">Manual</div><div class="stat-lbl">relatório diário de disponibilidade — produzido à mão pela equipe de Dados</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--s-teal)">7</div><div class="stat-lbl">estados do ciclo de vida que precisam de monitoramento contínuo</div></div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- CONCEITO -->
+<div id="conceito">
+<div class="section">
+  <div class="reveal">
+    <div class="eyebrow">02 — O que é</div>
+    <h2 class="title">Ciclo de vida e<br><span>máquina de estados.</span></h2>
+    <p class="lead">Dois conceitos complementares. O ciclo de vida define o que acontece com um produto do nascimento ao arquivamento. A máquina de estados torna esse ciclo visível, controlável e automatizável.</p>
+  </div>
+  <div class="concept-layout reveal">
+    <div class="concept-text">
+      <p><strong>Ciclo de vida dos produtos</strong> é o conjunto de etapas que um produto percorre desde a negociação comercial até ser retirado do catálogo digital. Cada etapa tem um responsável, um critério de entrada e uma condição de saída.</p>
+      <p><strong>Máquina de estados</strong> é o método de materialização e monitoria. Em vez de planilhas e relatórios manuais, cada produto tem um estado atual — preciso, rastreável e atualizado automaticamente conforme avança ou trava no ciclo.</p>
+      <p>O resultado é <strong>visibilidade total em tempo real</strong>: qualquer pessoa sabe onde cada produto está, por que está travado e qual time precisa agir — sem abrir vários sistemas.</p>
+      <p>Em <strong>Centauro</strong>, esse modelo está em execução avançada na etapa de Disponibilidade Digital. <strong>Fisia</strong> inicia em junho ou após a conclusão dessa etapa em Centauro, aproveitando todo o modelo já validado.</p>
+    </div>
+    <div>
+      <div class="flow-wrap">
+        <div class="flow-title">Máquina de estados — fluxo completo</div>
+
+        <div class="flow-state" style="background:var(--s-teal-bg);border-color:var(--s-teal)">
+          <div class="flow-state-num">Estado 1</div>
+          <div class="flow-state-name" style="color:var(--s-teal)">EM_CADASTRO_COMERCIAL</div>
+          <div class="flow-state-sub" style="color:var(--s-teal)">Cadastro SAP pendente · Responsável: Comercial</div>
+        </div>
+        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ automática</div></div>
+
+        <div class="flow-state" style="background:var(--s-teal-bg);border-color:var(--s-teal)">
+          <div class="flow-state-num">Estado 2</div>
+          <div class="flow-state-name" style="color:var(--s-teal)">EM_CADASTRO_DIGITAL</div>
+          <div class="flow-state-sub" style="color:var(--s-teal)">Ficha digital básica criada · Automático</div>
+        </div>
+        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ automática</div></div>
+
+        <div class="flow-prep">
+          <span class="flow-prep-label">Estado 3 · Em preparação digital</span>
+          <div class="flow-prep-sub">três gestões em paralelo — etapa mais crítica</div>
+          <div class="flow-prep-grid">
+            <div class="flow-mini"><div class="flow-mini-name">Catálogo</div><div class="flow-mini-sub">imagens, mídia</div></div>
+            <div class="flow-mini"><div class="flow-mini-name">Preço</div><div class="flow-mini-sub">margem, política</div></div>
+            <div class="flow-mini"><div class="flow-mini-name">Estoque</div><div class="flow-mini-sub">futurável, digital</div></div>
+          </div>
+          <div class="flow-special">
+            <div class="flow-special-name">BLOQUEADO_MARGEM_SEGURANÇA</div>
+            <div class="flow-special-sub">Estoque físico &gt; 0, digital = 0</div>
+            <span class="flow-special-badge">regra especial</span>
+          </div>
+        </div>
+        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual + automática</div></div>
+
+        <div class="flow-state focus" style="background:var(--s-green-bg);border-color:var(--s-green)">
+          <div class="flow-state-num">Estado 4 · FOCO ATUAL</div>
+          <div class="flow-state-name" style="color:var(--s-green)">DISPONÍVEL_VENDA_DIGITAL</div>
+          <div class="flow-state-sub" style="color:var(--s-green)">Visível e vendável no site · Épico em execução</div>
+        </div>
+        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual</div></div>
+
+        <div class="flow-state" style="background:var(--s-amber-bg);border-color:var(--s-amber)">
+          <div class="flow-state-num">Estado 5</div>
+          <div class="flow-state-name" style="color:var(--s-amber)">EM_PROMOÇÃO</div>
+          <div class="flow-state-sub" style="color:var(--s-amber)">Campanhas / liquidação · Manual</div>
+        </div>
+        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual</div></div>
+
+        <div class="flow-state" style="background:var(--s-red-bg);border-color:var(--s-red)">
+          <div class="flow-state-num">Estado 6</div>
+          <div class="flow-state-name" style="color:var(--s-red)">EM_BLOQUEIO_COMERCIAL</div>
+          <div class="flow-state-sub" style="color:var(--s-red)">Risco / compliance · Manual</div>
+        </div>
+        <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-lbl">→ manual / automática</div></div>
+
+        <div class="flow-state" style="background:var(--s-gray-bg);border-color:var(--s-gray)">
+          <div class="flow-state-num">Estado 7</div>
+          <div class="flow-state-name" style="color:var(--s-gray)">DESATIVADO / ARQUIVADO</div>
+          <div class="flow-state-sub" style="color:var(--s-gray)">Após consumo total do estoque</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ESTRATEGIA -->
+<div id="estrategia">
+<div class="section">
+  <div class="reveal">
+    <div class="eyebrow">03 — A estratégia</div>
+    <h2 class="title">Uma trilha.<br><span>Dois momentos.</span></h2>
+    <p class="lead">Centauro e Fisia seguem exatamente a mesma estratégia, os mesmos estados e os mesmos KPIs. Cada BU mantém sua visão e seus dados isolados. A diferença é o ponto de partida — não o destino.</p>
+  </div>
+
+  <div class="principle-strip reveal">
+    <div class="pr-item">
+      <div class="pr-bar" style="background:var(--sbf)"></div>
+      <div class="pr-title">Mesma estratégia</div>
+      <div class="pr-text">O modelo de estados, regras de transição e governança são idênticos para Centauro e Fisia.</div>
+    </div>
+    <div class="pr-item">
+      <div class="pr-bar" style="background:var(--fis)"></div>
+      <div class="pr-title">Dados isolados por BU</div>
+      <div class="pr-text">Cada unidade tem sua própria visão, seus próprios indicadores e preserva a privacidade das informações.</div>
+    </div>
+    <div class="pr-item">
+      <div class="pr-bar" style="background:var(--s-teal)"></div>
+      <div class="pr-title">Mesmos KPIs</div>
+      <div class="pr-text">% SKUs vendáveis, tempo de liberação e redução de estoque bloqueado — métricas comuns para benchmarking entre BUs.</div>
+    </div>
+  </div>
+
+  <div class="bu-grid reveal">
+    <div class="bu-col">
+      <div class="bu-col-hd">
+        <div class="bu-col-icon" style="background:var(--cen)">CEN</div>
+        <div>
+          <div class="bu-col-name" style="color:var(--cen)">Centauro</div>
+          <div class="bu-col-status">Disponibilidade digital · em execução avançada</div>
+        </div>
+      </div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--s-green)"></div><div class="bu-item-text">Estados 1 e 2 (cadastro comercial e digital) <strong>em produção</strong></div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--s-green)"></div><div class="bu-item-text">Épico de Disponibilidade Digital com <strong>5 histórias em andamento</strong></div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--s-green)"></div><div class="bu-item-text">Agente conversacional de diagnóstico <strong>(Google ADK) em POC</strong></div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--s-green)"></div><div class="bu-item-text">Dashboard Com/Sem OMS e Nível Peças <strong>estruturado</strong></div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--s-amber)"></div><div class="bu-item-text">Próximo: V2 — Promoção e bloqueios comerciais</div></div>
+    </div>
+    <div class="bu-col">
+      <div class="bu-col-hd">
+        <div class="bu-col-icon" style="background:var(--fis)">FIS</div>
+        <div>
+          <div class="bu-col-name" style="color:var(--fis)">Fisia</div>
+          <div class="bu-col-status">Início após conclusão Centauro · junho / 2026</div>
+        </div>
+      </div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--fis)"></div><div class="bu-item-text"><strong>Herda o modelo validado</strong> — começa com o mapa pronto, não do zero</div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--fis)"></div><div class="bu-item-text">Integração com sistemas específicos de Fisia mapeada e adaptada</div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--fis)"></div><div class="bu-item-text">Agente calibrado contra relatório manual <strong>próprio de Fisia</strong></div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--fis)"></div><div class="bu-item-text">Dashboard <strong>com filtro por BU</strong> — dados isolados, visão unificada opcional</div></div>
+      <div class="bu-item"><div class="bu-item-dot" style="background:var(--fis)"></div><div class="bu-item-text">Report e bot Slack configurados para canais e times de Fisia</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- PLANO -->
+<div id="plano">
+<div class="section">
+  <div class="reveal">
+    <div class="eyebrow">04 — O plano</div>
+    <h2 class="title">Sequência,<br><span>épicos e histórias.</span></h2>
+    <p class="lead">A primeira entrega prioriza a Disponibilidade Venda Digital — maior impacto imediato. Fisia entra no mesmo fluxo após a conclusão desta etapa em Centauro.</p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="tl-line"></div>
+
+    <!-- Agora -->
+    <div class="tl-row">
+      <div class="tl-label"><div class="tl-label-text">Agora</div><div class="tl-label-date">mai/26</div></div>
+      <div class="tl-dot" style="background:var(--cen)"></div>
+      <div class="tl-content">
+        <div class="tl-epico">V1 — Disponibilidade venda digital</div>
+        <div class="tl-desc">Épico principal em execução em Centauro. 5 histórias cobrindo indicadores, agente IA, dashboard e automações no Slack.</div>
+        <div class="tl-bu-row">
+          <span class="tl-bu-chip" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)"><span style="width:5px;height:5px;border-radius:50%;background:var(--cen)"></span>Centauro · Em andamento avançado</span>
+          <span class="tl-bu-chip" style="background:var(--s-gray-bg);border-color:var(--border-s);color:var(--muted)">Fisia · Aguardando conclusão de Centauro</span>
+        </div>
+        <div class="tl-tags" style="margin-top:8px">
+          <span class="tl-tag" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)">H1 Indicador catálogo</span>
+          <span class="tl-tag" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)">H2 Agente IA</span>
+          <span class="tl-tag" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)">H3 Dashboard</span>
+          <span class="tl-tag" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)">H4 Report Slack</span>
+          <span class="tl-tag" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)">H5 Bot Slack</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Junho -->
+    <div class="tl-row">
+      <div class="tl-label"><div class="tl-label-text">Início</div><div class="tl-label-date">jun/26</div></div>
+      <div class="tl-dot" style="background:var(--fis)"></div>
+      <div class="tl-content">
+        <div class="tl-epico">V0.5 — Fisia: fundação</div>
+        <div class="tl-desc">Fisia inicia após conclusão do V1 de Centauro. Começa pelo V0.5 (cadastro comercial e digital) aproveitando o modelo validado.</div>
+        <div class="tl-bu-row">
+          <span class="tl-bu-chip" style="background:var(--s-green-bg);border-color:#81C784;color:var(--s-green)">Centauro · V1 concluído</span>
+          <span class="tl-bu-chip" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)"><span style="width:5px;height:5px;border-radius:50%;background:var(--fis)"></span>Fisia · Início imediato</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- V1 Fisia -->
+    <div class="tl-row">
+      <div class="tl-label"><div class="tl-label-text">Paralelo</div><div class="tl-label-date">jun–ago/26</div></div>
+      <div class="tl-dot" style="background:var(--fis)"></div>
+      <div class="tl-content">
+        <div class="tl-epico">V1 — Fisia: disponibilidade digital</div>
+        <div class="tl-desc">Mesmas 5 histórias do épico de Centauro, adaptadas ao contexto de Fisia. Agente calibrado, dashboard com filtro por BU.</div>
+        <div class="tl-bu-row">
+          <span class="tl-bu-chip" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)"><span style="width:5px;height:5px;border-radius:50%;background:var(--fis)"></span>Fisia · Mesmas 5 histórias adaptadas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- V2 -->
+    <div class="tl-row">
+      <div class="tl-label"><div class="tl-label-text">V2</div><div class="tl-label-date">ago–out/26</div></div>
+      <div class="tl-dot" style="background:var(--border-s)"></div>
+      <div class="tl-content">
+        <div class="tl-epico">V2 — Promoção e bloqueios comerciais</div>
+        <div class="tl-desc">Estados 5 e 6 do ciclo. Centauro e Fisia implementam juntas — mesma base de código, mesma governança.</div>
+        <div class="tl-bu-row">
+          <span class="tl-bu-chip" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)">Centauro</span>
+          <span class="tl-bu-chip" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)">Fisia</span>
+          <span class="tl-tag" style="background:var(--surface2);border-color:var(--border-s);color:var(--muted)">Mesma implementação</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboards -->
+    <div class="tl-row">
+      <div class="tl-label"><div class="tl-label-text">Contínuo</div><div class="tl-label-date">set/26</div></div>
+      <div class="tl-dot" style="background:var(--border-s)"></div>
+      <div class="tl-content">
+        <div class="tl-epico">Dashboards unificados Grupo SBF</div>
+        <div class="tl-desc">Visão consolidada com filtro por BU. Dados isolados por unidade, benchmarking corporativo com KPIs comuns.</div>
+        <div class="tl-bu-row">
+          <span class="tl-tag" style="background:var(--sbf-light);border-color:var(--sbf-border);color:var(--sbf)">Visão Holding</span>
+          <span class="tl-tag" style="background:var(--cen-light);border-color:var(--cen-border);color:var(--cen)">Centauro isolado</span>
+          <span class="tl-tag" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)">Fisia isolado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Epico stories -->
+  <div class="reveal">
+    <div class="eyebrow" style="margin-bottom:12px">Épico V1 — as 5 histórias em detalhe</div>
+  </div>
+  <div class="stories-wrap reveal">
+    <div class="stories-header">
+      <div class="stories-header-title">Disponibilidade Venda Digital</div>
+      <div class="stories-header-desc">O Time Comercial visualiza em tempo real quais produtos estão liberados e quais têm bloqueios, com dados confiáveis do Data Lake — resultando em aumento mensurável de SKUs vendáveis.</div>
+    </div>
+    <div class="stories-grid">
+      <div class="story">
+        <div class="story-num">H1</div>
+        <div class="story-title">Indicador de pendência de catálogo</div>
+        <div class="story-desc">Indicador visual por cor na tela de gestão mostrando o motivo da não projeção — sem precisar investigar em múltiplos sistemas.</div>
+        <span class="story-tag" style="background:var(--s-green-bg);border-color:#81C784;color:var(--s-green)">Quick win</span>
+      </div>
+      <div class="story">
+        <div class="story-num">H2</div>
+        <div class="story-title">Agente conversacional de diagnóstico</div>
+        <div class="story-desc">Agente multi-agente (Google ADK) que responde em linguagem natural sobre o status de qualquer produto ou SKU, com drill-down e exportação.</div>
+        <span class="story-tag" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)">Google ADK · IA</span>
+      </div>
+      <div class="story">
+        <div class="story-num">H3</div>
+        <div class="story-title">Dashboard de disponibilidade</div>
+        <div class="story-desc">Evolução temporal e consolidado por motivo — Com/Sem OMS e Nível Peças. Filtros por data, sala, marca e motivo.</div>
+        <span class="story-tag" style="background:var(--fis-light);border-color:var(--fis-border);color:var(--fis)">BI · Looker / PBI</span>
+      </div>
+      <div class="story">
+        <div class="story-num">H4</div>
+        <div class="story-title">Report diário automático no Slack</div>
+        <div class="story-desc">Job matinal que consolida 4 indicadores-chave e envia mensagem estruturada com conclusão gerada pelo agente e link para o dashboard.</div>
+        <span class="story-tag" style="background:var(--s-amber-bg);border-color:#FCD34D;color:var(--s-amber)">Depende de H2 + H3</span>
+      </div>
+      <div class="story">
+        <div class="story-num">H5</div>
+        <div class="story-title">Chatbot de consulta no Slack</div>
+        <div class="story-desc">Bot que responde sob demanda: "@Agente por que o SKU X não está no site?" — diagnóstico em segundos, sem sair da ferramenta de trabalho.</div>
+        <span class="story-tag" style="background:var(--s-amber-bg);border-color:#FCD34D;color:var(--s-amber)">Depende de H2</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- RESULTADOS -->
+<div id="resultados">
+<div class="section">
+  <div class="reveal">
+    <div class="eyebrow">05 — Resultados esperados</div>
+    <h2 class="title">O que muda<br><span>na prática.</span></h2>
+    <p class="lead">Mais do que tecnologia — esta iniciativa muda como os times trabalham. Investigação manual substitída por visibilidade automática e decisões baseadas em dados confiáveis.</p>
+  </div>
+  <div class="kpi-grid reveal">
+    <div class="kpi-card"><div class="kpi-val">+SKUs</div><div class="kpi-name">Mais produtos vendáveis</div><div class="kpi-desc">Redução do estoque "preso" por questões operacionais — convertido em receita.</div></div>
+    <div class="kpi-card"><div class="kpi-val">−Tempo</div><div class="kpi-name">Investigação em segundos</div><div class="kpi-desc">Diagnóstico de SKU travado via agente, sem abrir múltiplos sistemas.</div></div>
+    <div class="kpi-card"><div class="kpi-val">1 fonte</div><div class="kpi-name">Verdade única de status</div><div class="kpi-desc">Um só lugar para saber onde cada produto está e quem precisa agir.</div></div>
+    <div class="kpi-card"><div class="kpi-val">Auto</div><div class="kpi-name">Report matinal automático</div><div class="kpi-desc">Relatório diário gerado e enviado no Slack — sem extração manual.</div></div>
+    <div class="kpi-card"><div class="kpi-val">2 BUs</div><div class="kpi-name">Governança unificada</div><div class="kpi-desc">Centauro e Fisia com os mesmos KPIs — dados isolados, benchmarking possível.</div></div>
+    <div class="kpi-card"><div class="kpi-val">Base</div><div class="kpi-name">Fundação para automações</div><div class="kpi-desc">A máquina de estados habilita liberação, promoção e descontinuação automatizadas.</div></div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- CLOSING -->
+<div id="closing">
+  <div class="closing-inner reveal">
+    <h2 class="closing-title">Fisia não começa<br><span>do zero.</span></h2>
+    <p class="closing-text">Começa com o modelo validado em Centauro, os aprendizados já acumulados e a estratégia desenhada. O trabalho é adaptar, calibrar e executar — com dados isolados por BU e governança compartilhada como Grupo SBF.</p>
+    <div class="next-steps">
+      <div class="ns-label">Próximos passos</div>
+      <div class="ns-item"><span class="ns-num">01</span>Concluir o V1 de Disponibilidade Digital em Centauro</div>
+      <div class="ns-item"><span class="ns-num">02</span>Alinhar início de Fisia para junho / 2026</div>
+      <div class="ns-item"><span class="ns-num">03</span>Mapear integração SAP e Data Lake de Fisia</div>
+      <div class="ns-item"><span class="ns-num">04</span>Definir dono de cada estado e SLAs por etapa em Fisia</div>
+      <div class="ns-item"><span class="ns-num">05</span>Calibrar agente de diagnóstico contra relatório manual de Fisia</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="ft">Ciclo de vida dos produtos · Grupo SBF · V1 Draft · 19 mai 2026</span>
+  <span class="ft">Confidencial · Uso interno</span>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  el.style.transitionDelay = (i % 4) * 0.07 + 's';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
