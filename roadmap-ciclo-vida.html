@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — Ciclo de Vida dos Produtos · Grupo SBF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F1;--surface:#FFFFFF;
+  --border:#E0DDD8;--border-s:#C8C5BE;
+  --text:#1C1B19;--muted:#6B6760;--faint:#A09D98;
+  --sbf:#E85D00;--sbf-light:#FFF0E8;
+  --cen:#E85D00;--cen-dark:#B34400;
+  --fis:#1A56CC;--fis-dark:#0D3A8E;
+  --grp:#6B21A8;--grp-dark:#4A044E;
+
+  /* Lane colors — inspirado na imagem */
+  --c-eng:#B0BEC5;       /* Engenharia — cinza */
+  --c-dados:#81C784;     /* Dados — verde médio */
+  --c-dados-eng:#7AAAF0; /* Dados+Eng — azul claro */
+  --c-full:#C084FC;      /* Dados+Eng+Design — roxo */
+
+  /* BU header */
+  --h-cen:#1B5E20;
+  --h-fis:#0D3A8E;
+  --h-sbf:#4A044E;
+
+  --font:'Sora',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --col-w:320px; /* largura de cada mês */
+  --row-h:58px;
+  --radius:6px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+nav{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:54px;position:sticky;top:0;z-index:200}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:30px;height:30px;border-radius:7px;background:var(--sbf);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff}
+.nav-title{font-size:13px;font-weight:600}
+.nav-sub{font-size:11px;color:var(--faint)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.nav-btn{font-size:11px;font-weight:500;font-family:var(--mono);color:var(--muted);text-decoration:none;padding:4px 11px;border:1px solid var(--border);border-radius:5px;background:var(--surface);transition:background .15s}
+.nav-btn:hover{background:var(--bg)}
+.nav-date{font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+/* HEADER AREA */
+.page-header{padding:28px 40px 20px;background:var(--surface);border-bottom:1px solid var(--border)}
+.page-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.page-title-group{}
+.page-eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--sbf);margin-bottom:6px}
+.page-title{font-size:clamp(20px,3vw,32px);font-weight:700;letter-spacing:-.03em;color:var(--text)}
+.page-title .dot{color:var(--sbf)}
+.page-updated{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:4px}
+
+/* LEGEND */
+.legend{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-bu{display:flex;gap:10px;flex-wrap:wrap}
+.bu-tag{font-size:11px;font-family:var(--mono);font-weight:500;padding:2px 8px;border-radius:3px;color:#fff}
+
+/* GANTT WRAPPER */
+.gantt-wrapper{overflow-x:auto;padding:0 40px 40px}
+
+/* GANTT TABLE */
+.gantt{width:100%;border-collapse:collapse;min-width:900px}
+
+/* MONTH HEADER */
+.month-header th{background:var(--h-cen);color:#fff;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:10px 0;border-right:2px dashed rgba(255,255,255,.3);width:var(--col-w)}
+.month-header th:first-child{background:transparent;width:180px;border-right:none}
+.month-header th.fis-bg{background:var(--h-fis)}
+.month-header th.sbf-bg{background:var(--h-sbf)}
+.month-header th.neutral{background:var(--border-s);color:var(--muted)}
+
+/* SECTION HEADER ROW */
+.section-row td{background:var(--text);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 16px;border-top:3px solid var(--sbf)}
+.section-row.cen td{background:var(--h-cen)}
+.section-row.fis td{background:var(--h-fis)}
+.section-row.sbf td{background:var(--h-sbf)}
+.section-row.shared td{background:#37474F}
+
+/* LANE ROW */
+.lane-row td{height:var(--row-h);vertical-align:middle;border-bottom:1px solid var(--border);padding:0}
+.lane-label{width:180px;padding:0 14px;font-size:11px;font-weight:500;color:var(--muted);background:var(--surface);border-right:3px solid var(--border-s);vertical-align:middle;line-height:1.35}
+.lane-label .lane-sub{font-size:9px;font-family:var(--mono);color:var(--faint);display:block;margin-top:2px}
+.lane-cell{position:relative;padding:6px 8px;vertical-align:middle;border-right:1px dashed var(--border)}
+.lane-cell:last-child{border-right:none}
+.lane-row:last-child td{border-bottom:none}
+
+/* GANTT BARS */
+.bar{border-radius:var(--radius);padding:6px 10px;font-size:11px;font-weight:500;line-height:1.3;display:flex;flex-direction:column;justify-content:center;position:relative;cursor:default;transition:filter .15s}
+.bar:hover{filter:brightness(.92)}
+.bar-title{font-size:11px;font-weight:600}
+.bar-sub{font-size:9px;font-weight:400;opacity:.8;margin-top:1px}
+.bar.span2{/* spans 2 months — handled via colspan */}
+
+/* bar colors */
+.bar-dados     {background:#A5D6A7;color:#1B5E20}
+.bar-dados-eng {background:#90CAF9;color:#0D3A8E}
+.bar-full      {background:#CE93D8;color:#4A044E}
+.bar-eng       {background:#CFD8DC;color:#37474F}
+.bar-cen       {background:#FFCC80;color:#E65100}
+.bar-fis       {background:#80DEEA;color:#006064}
+
+/* NEW badge */
+.new-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#2E7D32;color:#fff;font-size:8px;font-weight:700;letter-spacing:.04em;position:absolute;right:-10px;top:50%;transform:translateY(-50%);border:2px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+
+/* MONTH DIVIDER LINE */
+.divider-col{border-left:2px dashed var(--border-s) !important}
+
+/* EMPTY CELL */
+.empty{background:var(--bg)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;background:var(--surface)}
+.ft{font-family:var(--mono);font-size:10px;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">SBF</div>
+    <div>
+      <div class="nav-title">Grupo SBF</div>
+      <div class="nav-sub">Roadmap · Ciclo de vida dos produtos</div>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <a class="nav-btn" href="apresentacao-ciclo-vida-sbf.html">← Apresentação</a>
+    <a class="nav-btn" href="maquina-estados-produto.html">◇ Máquina de estados</a>
+    <a class="nav-btn" href="index.html">⊞ Menu</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-top">
+    <div class="page-title-group">
+      <div class="page-eyebrow">Ciclo de vida dos produtos · Q2–Q3 2026</div>
+      <div class="page-title">CICLO DE VIDA <span class="dot">·</span> PRIORIDADES 2026</div>
+      <div class="page-updated">Atualizado: mai/2026</div>
+    </div>
+    <div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#A5D6A7"></div>Dados</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#90CAF9"></div>Dados + Eng</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#CE93D8"></div>Dados + Eng + Design</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#CFD8DC"></div>Engenharia</div>
+      </div>
+      <div class="legend-bu" style="margin-top:10px">
+        <span class="bu-tag" style="background:var(--h-cen)">[CNT] Centauro</span>
+        <span class="bu-tag" style="background:var(--h-fis)">[FIS] Fisia</span>
+        <span class="bu-tag" style="background:var(--h-sbf)">[SBF] Grupo</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="gantt-wrapper">
+<table class="gantt">
+  <thead>
+    <tr class="month-header">
+      <th style="background:transparent;border-right:3px solid var(--border-s)"></th>
+      <th>MAIO</th>
+      <th class="neutral">JUNHO</th>
+      <th class="neutral">JULHO</th>
+      <th class="neutral">AGO–SET</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- ═══ CENTAURO — V1 DISPONIBILIDADE ═══ -->
+    <tr class="section-row cen">
+      <td colspan="5">[CNT] V1 — Disponibilidade Venda Digital · CAT-969 · Em execução</td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H1 · Indicador<br>de catálogo<span class="lane-sub">Lucas · Quick win</span></td>
+      <td class="lane-cell">
+        <div class="bar bar-full">
+          <div class="bar-title">[CNT] Indicador de pendência de catálogo</div>
+          <div class="bar-sub">Motivo da não projeção por cor · CAT-975</div>
+        </div>
+      </td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H2 · Agente Snow<span class="lane-sub">Raphael · Google ADK</span></td>
+      <td class="lane-cell">
+        <div class="bar bar-dados-eng">
+          <div class="bar-title">[CNT] Snow — Agente conversacional de diagnóstico</div>
+          <div class="bar-sub">Hierarquia determinística · BigQuery + Tesseract + Stock API · CAT-1031</div>
+        </div>
+      </td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H3 · Dashboard<span class="lane-sub">Lucas · Looker</span></td>
+      <td class="lane-cell">
+        <div class="bar bar-full" style="position:relative">
+          <div class="bar-title">[CNT] Dashboard de disponibilidade (Com/Sem OMS · Nível Peças)</div>
+          <div class="bar-sub">Evolução temporal + motivos · CAT-1050 · Em testes</div>
+        </div>
+      </td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H3.1 · Granularidade<span class="lane-sub">Lucas · Sub-task</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col">
+        <div class="bar bar-dados" style="position:relative">
+          <div class="bar-title">[CNT] Granularidade semanal/mensal no dashboard</div>
+          <div class="bar-sub">LookML timeframes: date, week, month · CAT-1102</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H4 · Report Slack<span class="lane-sub">Raphael · Job agendado</span></td>
+      <td class="lane-cell">
+        <div class="bar bar-dados-eng">
+          <div class="bar-title">[CNT] Report diário automático no Slack</div>
+          <div class="bar-sub">4 indicadores + Conclusão do Dia · CAT-1051</div>
+        </div>
+      </td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H5 · ChatBot Slack<span class="lane-sub">Raphael · Slack API</span></td>
+      <td class="lane-cell">
+        <div class="bar bar-dados-eng">
+          <div class="bar-title">[CNT] ChatBot de consulta no Slack</div>
+          <div class="bar-sub">Diagnóstico por SKU · Read only · CAT-1052</div>
+        </div>
+      </td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <!-- ═══ FISIA — V1 DISPONIBILIDADE ═══ -->
+    <tr class="section-row fis">
+      <td colspan="5">[FIS] V1 — Disponibilidade Venda Digital · CAT-1092 · Início jun/2026</td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H1 · Indicador<span class="lane-sub">jun 01→10</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col">
+        <div class="bar bar-full" style="position:relative">
+          <div class="bar-title">[FIS] Indicador de pendência de catálogo</div>
+          <div class="bar-sub">Sem OMS · Motivos: data lançamento, bloqueio RP · CAT-1093</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H2 · Agente Fisia<span class="lane-sub">jun 10→20</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col">
+        <div class="bar bar-dados-eng" style="position:relative">
+          <div class="bar-title">[FIS] Agente conversacional de diagnóstico</div>
+          <div class="bar-sub">Sem OMS · Calibrado vs relatório manual · CAT-1095</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H3 · Dashboard Fisia<span class="lane-sub">jun 10→20</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col">
+        <div class="bar bar-full" style="position:relative">
+          <div class="bar-title">[FIS] Dashboard de disponibilidade</div>
+          <div class="bar-sub">Sem OMS · Dados isolados de Fisia · CAT-1096</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">H4+H5 · Slack Fisia<span class="lane-sub">jun 20→26</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col">
+        <div class="bar bar-dados-eng" style="position:relative">
+          <div class="bar-title">[FIS] Report diário + ChatBot no Slack</div>
+          <div class="bar-sub">Canais e times de Fisia · CAT-1097 + CAT-1098</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <!-- ═══ V2 — PREPARAÇÃO DIGITAL COMPLETA ═══ -->
+    <tr class="section-row shared">
+      <td colspan="5">V2 — Preparação digital completa · Centauro + Fisia · Planejado</td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">Gestão de Busca<span class="lane-sub">Centauro · Fisia</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell">
+        <div class="bar bar-dados-eng" style="position:relative">
+          <div class="bar-title">[CNT+FIS] Indexação · NAO_INDEXADO · Tesseract</div>
+          <div class="bar-sub">AGUARDANDO_INDEXACAO · BUSCA_OK · time Seios/Carlos</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">Gestão de Aquisição<span class="lane-sub">Estoque · Comercial</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell">
+        <div class="bar bar-dados" style="position:relative">
+          <div class="bar-title">[CNT] Aquisição integrada ao Estoque digital</div>
+          <div class="bar-sub">Pré-Reserva → Agendado → Recebido · paralelo ao fluxo digital</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">Aquisição Fisia<span class="lane-sub">Coleções Nike</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell">
+        <div class="bar bar-fis" style="position:relative">
+          <div class="bar-title">[FIS] Gestão de Aquisição por coleção Nike</div>
+          <div class="bar-sub">Coleção Planejada → Grade Confirmada → Recebido · 4 coleções/ano</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">Liberação ativa<span class="lane-sub">Split Signal CAT-1052</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell">
+        <div class="bar bar-full" style="position:relative">
+          <div class="bar-title">[CNT+FIS] Liberação ativa via Slack (escrita)</div>
+          <div class="bar-sub">Aprovação comercial de produtos direto pelo bot</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+      <td class="lane-cell empty"></td>
+    </tr>
+
+    <!-- ═══ V3 — PROMOÇÃO E BLOQUEIOS ═══ -->
+    <tr class="section-row shared">
+      <td colspan="5">V3 — Promoção e bloqueios comerciais · Centauro + Fisia · Backlog</td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">EM_PROMOCAO<span class="lane-sub">Estados 5</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell">
+        <div class="bar bar-cen">
+          <div class="bar-title">[CNT+FIS] EM_PROMOCAO · EM_PROMOCAO_ATIVA · LIQUIDACAO</div>
+          <div class="bar-sub">Integração plataforma de campanhas · Marketing + Comercial</div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">EM_BLOQUEIO<span class="lane-sub">Estado 6</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell">
+        <div class="bar bar-cen">
+          <div class="bar-title">[CNT+FIS] BLOQUEADO_PRONTO · RECALL · COMPLIANCE</div>
+          <div class="bar-sub">SLA revisão 15 dias · alerta automático sem motivo registrado</div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- ═══ SBF — DASHBOARDS UNIFICADOS ═══ -->
+    <tr class="section-row sbf">
+      <td colspan="5">[SBF] Dashboards unificados Grupo SBF · Visão Holding · set/2026</td>
+    </tr>
+
+    <tr class="lane-row">
+      <td class="lane-label">Visão consolidada<span class="lane-sub">Holding · Filtro BU</span></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell divider-col empty"></td>
+      <td class="lane-cell empty"></td>
+      <td class="lane-cell">
+        <div class="bar bar-full" style="position:relative">
+          <div class="bar-title">[SBF] Dashboard unificado Grupo SBF</div>
+          <div class="bar-sub">Filtro BU: Centauro / Fisia / Holding · KPIs comuns · dados isolados</div>
+          <span class="new-badge">NEW</span>
+        </div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<footer>
+  <span class="ft">Ciclo de vida dos produtos · Grupo SBF · Roadmap Q2–Q3 2026 · mai/2026</span>
+  <span class="ft">Confidencial · Uso interno</span>
+</footer>
+
+</body>
+</html>

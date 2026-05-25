@@ -131,8 +131,8 @@ footer{border-top:1px solid var(--border);padding:16px 40px;display:flex;justify
 <main>
   <div class="page-header">
     <div class="page-eyebrow">Ciclo de vida dos produtos · Animação interativa</div>
-    <h1 class="page-title">Um produto, <span>7 estados.</span></h1>
-    <p class="page-sub">Acompanhe a jornada completa de um produto — desde a negociação comercial até a venda digital — e veja cada atributo sendo desbloqueado a cada etapa.</p>
+    <h1 class="page-title">Um produto, <span>7 estados + Aquisição.</span></h1>
+    <p class="page-sub">Acompanhe a jornada completa de um produto — desde o pedido de compra até a venda digital — e veja cada atributo sendo desbloqueado a cada etapa. A Gestão de Aquisição corre em paralelo ao fluxo digital, alimentando o estoque.</p>
   </div>
 
   <div class="controls">
@@ -184,23 +184,26 @@ const COLORS={
   gray: {bg:'#F1EFE8',border:'#5F5E5A',text:'#444441',dot:'#888780'},
 };
 const ATTRS=[
-  {key:'sap',    icon:'ti-database',  label:'Cadastro SAP',       val:'COD-TRP-2026'},
-  {key:'cat',    icon:'ti-category',  label:'Categoria digital',  val:'Calçados / Corrida'},
-  {key:'img',    icon:'ti-photo',     label:'Imagens',            val:'8 fotos aprovadas'},
-  {key:'desc',   icon:'ti-file-text', label:'Descrição',          val:'Completa + ficha técnica'},
-  {key:'preco',  icon:'ti-tag',       label:'Preço',              val:'R$ 349,90'},
-  {key:'estoque',icon:'ti-package',   label:'Estoque digital',    val:'142 unidades'},
-  {key:'site',   icon:'ti-world',     label:'Visível no site',    val:'centauro.com.br'},
-  {key:'promo',  icon:'ti-discount',  label:'Campanha',           val:'Sale de Inverno 2026'},
+  {key:'sap',    icon:'ti-database',      label:'Cadastro SAP',        val:'COD-TRP-2026'},
+  {key:'cat',    icon:'ti-category',      label:'Categoria digital',   val:'Calçados / Corrida'},
+  {key:'aquisicao',icon:'ti-shopping-bag',label:'Pedido de compra',    val:'Pré-reserva → Agendado → Recebido'},
+  {key:'img',    icon:'ti-photo',         label:'Imagens',             val:'8 fotos aprovadas'},
+  {key:'desc',   icon:'ti-file-text',     label:'Descrição + atributos',val:'Completa + ficha técnica'},
+  {key:'preco',  icon:'ti-tag',           label:'Preço',               val:'R$ 349,90'},
+  {key:'estoque',icon:'ti-package',       label:'Estoque digital',     val:'142 unidades'},
+  {key:'busca',  icon:'ti-search',        label:'Indexação (Busca)',   val:'Indexado e apto'},
+  {key:'site',   icon:'ti-world',         label:'Visível no site',     val:'centauro.com.br'},
+  {key:'promo',  icon:'ti-discount',      label:'Campanha',            val:'Sale de Inverno 2026'},
 ];
 const STATES=[
-  {num:'Estado 1 de 7',name:'Em cadastro comercial',color:'teal',badge:'Automático',icon:'ti-file-invoice',desc:'O produto foi negociado e tem código comercial, mas ainda não está validado no SAP. Nenhum sistema digital sabe que ele existe.',trans:'→ Transição automática via integração SAP',unlocked:[],unlocking:['sap'],status:'Aguardando validação SAP'},
-  {num:'Estado 2 de 7',name:'Em cadastro digital',color:'teal',badge:'Automático',icon:'ti-id',desc:'O SAP reconhece o produto. A plataforma digital recebe os dados básicos e cria a ficha — mas ainda sem conteúdo ou preço.',trans:'→ Transição automática via integração ERP → plataforma',unlocked:['sap'],unlocking:['cat'],status:'Ficha digital criada'},
-  {num:'Estado 3 de 7',name:'Em preparação digital',color:'blue',badge:'Manual + Automático',icon:'ti-adjustments',desc:'Três gestões em paralelo: catálogo (imagens e descrição), preço (margem e política comercial) e estoque (futurável e margem de segurança).',trans:'→ Validações automáticas + aprovação manual',unlocked:['sap','cat'],unlocking:['img','desc','preco','estoque'],status:'Preparando — 4 pendências'},
-  {num:'Estado 4 de 7',name:'Disponível — venda digital',color:'green',badge:'Foco atual',icon:'ti-shopping-cart',desc:'Todas as validações passaram. O produto está visível no site, pode ser adicionado ao carrinho e comprado. Receita sendo gerada.',trans:'→ Desbloqueio manual pelo time comercial após validações',unlocked:['sap','cat','img','desc','preco','estoque'],unlocking:['site'],status:'Visível e vendável no site'},
-  {num:'Estado 5 de 7',name:'Em promoção',color:'amber',badge:'Manual',icon:'ti-rosette-discount',desc:'O produto foi vinculado a uma campanha ativa. Preço diferenciado e badge especial no site.',trans:'→ Ativação manual pelo time de Marketing / Comercial',unlocked:['sap','cat','img','desc','preco','estoque','site'],unlocking:['promo'],status:'Em campanha ativa'},
-  {num:'Estado 6 de 7',name:'Em bloqueio comercial',color:'red',badge:'Manual',icon:'ti-lock',desc:'Bloqueio intencional — recall, decisão comercial, risco jurídico ou compliance. Produto sai do ar, cadastro preservado.',trans:'→ Bloqueio manual com motivo obrigatório registrado',unlocked:['sap','cat','img','desc','preco','estoque'],unlocking:[],status:'Fora do ar — motivo registrado'},
-  {num:'Estado 7 de 7',name:'Desativado / Arquivado',color:'gray',badge:'Manual / Automático',icon:'ti-archive',desc:'Fim de vida do produto. Ativado somente após consumo total do estoque físico e confirmação de descontinuação.',trans:'→ Manual ou automático quando estoque zera + flag descontinuação',unlocked:['sap','cat','img','desc','preco','estoque'],unlocking:[],status:'Descontinuado — arquivado'},
+  {num:'Gestão de Aquisição',name:'Pedido de compra criado',color:'teal',badge:'Manual no SAP · Evolução automática',icon:'ti-shopping-bag',desc:'O Comercial cria o pedido de compra no SAP após o cadastro comercial existir. A evolução dos status (Pré-Reserva → Agendado → Recebido) é automática via integração com a marca. Corre em paralelo ao fluxo digital.',trans:'→ Paralelo ao fluxo digital. RECEBIDO alimenta o estoque no Estado 3.',unlocked:['sap'],unlocking:['aquisicao'],status:'Pré-Reserva → Agendado → Recebido'},
+  {num:'Estado 1 de 7',name:'Em cadastro comercial',color:'teal',badge:'Automático',icon:'ti-file-invoice',desc:'O produto tem cadastro SAP existente — ponto de partida do fluxo digital. Enquanto incompleto ou com erro, fica retido aqui.',trans:'→ Automática via integração SAP → plataforma digital.',unlocked:['sap','aquisicao'],unlocking:['cat'],status:'Cadastro SAP validado'},
+  {num:'Estado 2 de 7',name:'Em cadastro digital',color:'teal',badge:'Automático',icon:'ti-id',desc:'A plataforma digital cria a ficha básica do produto. O pedido de compra já pode estar evoluindo em paralelo. Produto ainda sem conteúdo, preço ou estoque digital.',trans:'→ Automática. Avança para Preparação Digital.',unlocked:['sap','aquisicao','cat'],unlocking:['img','desc'],status:'Ficha digital criada'},
+  {num:'Estado 3 de 7',name:'Em preparação digital',color:'blue',badge:'Manual + Automático',icon:'ti-adjustments',desc:'Quatro gestões em paralelo — Catálogo (imagens, atributos), Pricing (preço, margem), Estoque (futurável — alimentado pela Gestão de Aquisição) e Busca (indexação via Tesseract). Hierarquia de motivos: Preço → Dimensões → OMS → Mídia → Bloqueado Pronto.',trans:'→ Todas as gestões OK → Gestão de Busca → DISPONIVEL_VENDA_DIGITAL.',unlocked:['sap','aquisicao','cat','img','desc'],unlocking:['preco','estoque','busca'],status:'4 gestões em paralelo'},
+  {num:'Estado 4 de 7',name:'Disponível — venda digital',color:'green',badge:'Objetivo alvo',icon:'ti-shopping-cart',desc:'Todas as validações passaram — Catálogo, Pricing, Estoque e Busca. O produto está indexado, visível no site e vendável. Receita sendo gerada.',trans:'→ Desbloqueio manual pelo Comercial após todas as validações automáticas.',unlocked:['sap','aquisicao','cat','img','desc','preco','estoque','busca'],unlocking:['site'],status:'Visível e vendável no site'},
+  {num:'Estado 5 de 7',name:'Em promoção',color:'amber',badge:'Manual',icon:'ti-rosette-discount',desc:'Produto vinculado a campanha ativa (Black Friday, liquidação, oferta relâmpago). Sub-estados: EM_PROMOCAO_ATIVA ou LIQUIDACAO.',trans:'→ Ativação e encerramento manuais pelo time de Marketing / Comercial.',unlocked:['sap','aquisicao','cat','img','desc','preco','estoque','busca','site'],unlocking:['promo'],status:'Em campanha ativa'},
+  {num:'Estado 6 de 7',name:'Em bloqueio comercial',color:'red',badge:'Manual',icon:'ti-lock',desc:'Bloqueio intencional com três motivações: BLOQUEADO_PRONTO (decisão comercial consciente — mais frequente), BLOQUEADO_RECALL (qualidade/segurança), BLOQUEADO_COMPLIANCE (jurídico). Motivo obrigatório.',trans:'→ Bloqueio e desbloqueio manuais. Revisão obrigatória a cada 15 dias para BLOQUEADO_PRONTO.',unlocked:['sap','aquisicao','cat','img','desc','preco','estoque','busca'],unlocking:[],status:'Fora do ar — motivo registrado'},
+  {num:'Estado 7 de 7',name:'Desativado / Arquivado',color:'gray',badge:'Manual / Automático',icon:'ti-archive',desc:'Estado terminal. Ativado somente após consumo total do estoque físico E confirmação de descontinuação. Reativação exige novo ID.',trans:'→ Manual ou automático (estoque zerado + flag de descontinuação).',unlocked:['sap','aquisicao','cat','img','desc','preco','estoque','busca'],unlocking:[],status:'Descontinuado — arquivado'},
 ];
 let cur=0,timer=null;
 function buildDots(){

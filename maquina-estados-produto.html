@@ -3,359 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Máquina de Estados – Ciclo de Vida do Produto</title>
+<title>Máquina de Estados V1 – Ciclo de Vida do Produto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F1;--surface:#FFFFFF;--surface2:#EEECEA;
+  --border:#E0DDD8;--border-s:#C8C5BE;
+  --text:#1C1B19;--muted:#6B6760;--faint:#A09D98;
+  --sbf:#E85D00;--sbf-light:#FFF0E8;--sbf-border:#F5A070;
+  --teal:#0D7A5F;--teal-bg:#E6F5F0;--teal-border:#5CBFA0;
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-border:#7AAAF0;
+  --green:#2E7D32;--green-bg:#E8F5E9;--green-border:#81C784;
+  --amber:#B45309;--amber-bg:#FEF3C7;--amber-border:#FCD34D;
+  --red:#C62828;--red-bg:#FDECEA;--red-border:#EF9A9A;
+  --gray:#546E7A;--gray-bg:#ECEFF1;--gray-border:#B0BEC5;
+  --purple:#6B21A8;--purple-bg:#F3E8FF;--purple-border:#C084FC;
+  --coral:#993C1D;--coral-bg:#FAECE7;--coral-border:#F5A070;
+  --panel-w:400px;--trans:.2s ease;
+  --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;flex-direction:column;gap:2px}
+.header-title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.header-meta{font-size:11px;color:var(--faint);font-family:var(--mono)}
+.header-actions{display:flex;align-items:center;gap:8px}
+.nav-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;font-family:var(--mono);color:var(--muted);text-decoration:none;padding:4px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);transition:background var(--trans)}
+.nav-btn:hover{background:var(--surface2)}
+.header-badge{font-size:10px;font-weight:500;font-family:var(--mono);background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);padding:3px 10px;border-radius:var(--radius-sm)}
 
-  :root {
-    --bg: #F7F6F3;
-    --surface: #FFFFFF;
-    --border: #E2E0DA;
-    --border-strong: #C8C6BE;
-    --text: #1A1918;
-    --text-muted: #6B6963;
-    --text-faint: #9E9B93;
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden}
+.diagram-area{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;align-items:stretch;gap:0}
 
-    --teal-bg: #E1F5EE;
-    --teal-border: #0F6E56;
-    --teal-text: #085041;
+/* LEGEND */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 16px;width:100%}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
 
-    --blue-bg: #E6F1FB;
-    --blue-border: #185FA5;
-    --blue-text: #0C447C;
+/* SECTION DIVIDER */
+.flow-section{width:100%;margin-bottom:4px}
+.flow-section-label{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.flow-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
-    --green-bg: #EAF3DE;
-    --green-border: #3B6D11;
-    --green-text: #27500A;
+/* NODES */
+.node{width:100%;border-radius:var(--radius);padding:12px 16px;cursor:pointer;transition:transform var(--trans),box-shadow var(--trans);border:1.5px solid transparent}
+.node:hover{transform:translateY(-1px);box-shadow:0 3px 14px rgba(0,0,0,.08)}
+.node.active{box-shadow:0 0 0 3px rgba(0,0,0,.1)}
+.node-title{font-size:12px;font-weight:600;font-family:var(--mono);letter-spacing:-.01em}
+.node-sub{font-size:11px;margin-top:3px;opacity:.75}
+.node-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.node-tag{font-size:9px;font-family:var(--mono);font-weight:500;padding:2px 6px;border-radius:3px;border:1px solid;opacity:.85}
 
-    --amber-bg: #FAEEDA;
-    --amber-border: #854F0B;
-    --amber-text: #633806;
+.node-teal{background:var(--teal-bg);border-color:var(--teal);color:var(--teal)}
+.node-blue{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
+.node-green{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.node-amber{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+.node-red{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.node-gray{background:var(--gray-bg);border-color:var(--gray);color:var(--gray)}
+.node-purple{background:var(--purple-bg);border-color:var(--purple);color:var(--purple)}
+.node-coral{background:var(--coral-bg);border-color:var(--coral);color:var(--coral)}
+.node-sbf{background:var(--sbf-light);border-color:var(--sbf);color:var(--sbf)}
 
-    --red-bg: #FCEBEB;
-    --red-border: #A32D2D;
-    --red-text: #791F1F;
+/* Centralização dos nodes e conectores dentro do parallel-main */
+.parallel-main .node{max-width:500px;align-self:center}
+.parallel-main .connector{align-self:center}
 
-    --coral-bg: #FAECE7;
-    --coral-border: #993C1D;
-    --coral-text: #712B13;
+/* CONNECTOR */
+.connector{display:flex;flex-direction:column;align-items:center;gap:2px;margin:2px 0}
+.connector-line{width:1.5px;height:20px;background:var(--border-s)}
+.connector-label{font-size:9px;font-family:var(--mono);color:var(--faint);letter-spacing:.02em;background:var(--bg);padding:0 4px;position:relative;top:-1px}
+.connector-arrow{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--border-s);margin-top:-3px}
 
-    --gray-bg: #F1EFE8;
-    --gray-border: #5F5E5A;
-    --gray-text: #444441;
+/* PREP CONTAINER */
+.prep-container{width:100%;border:1.5px dashed var(--border-s);border-radius:var(--radius);padding:16px 14px 14px;background:var(--surface);position:relative;margin:2px 0}
+.prep-label{font-size:10px;font-weight:600;font-family:var(--mono);color:var(--blue);letter-spacing:.06em;text-transform:uppercase;position:absolute;top:-9px;left:14px;background:var(--surface);padding:0 5px}
+.prep-sub{font-size:10px;color:var(--faint);text-align:center;margin-bottom:12px;margin-top:2px}
+.prep-section{margin-bottom:10px}
+.prep-section-label{font-size:9px;font-family:var(--mono);font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:6px;padding-left:2px}
+.prep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+.prep-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px}
+.prep-grid .node,.prep-grid-2 .node{max-width:100%;padding:9px 11px}
+.prep-grid .node-title,.prep-grid-2 .node-title{font-size:10px}
+.prep-grid .node-sub,.prep-grid-2 .node-sub{font-size:9px}
 
-    --panel-w: 380px;
-    --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
-  }
+.prep-divider{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:9px;color:var(--faint);font-family:var(--mono);letter-spacing:.04em}
+.prep-divider::before,.prep-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+.margem-node{border-radius:var(--radius-sm);border:1.5px solid var(--amber);background:var(--amber-bg);padding:8px 12px;cursor:pointer;transition:transform var(--trans)}
+.margem-node:hover{transform:translateY(-1px)}
+.margem-title{font-size:10px;font-weight:600;font-family:var(--mono);color:var(--amber)}
+.margem-sub{font-size:9px;color:var(--amber);opacity:.8;margin-top:2px}
 
-  /* HEADER */
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 18px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-left { display: flex; flex-direction: column; gap: 2px; }
-  .header-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-  .header-meta { font-size: 12px; color: var(--text-faint); font-family: 'IBM Plex Mono', monospace; }
-  .header-badge {
-    font-size: 11px; font-weight: 500; font-family: 'IBM Plex Mono', monospace;
-    background: var(--green-bg); color: var(--green-text);
-    border: 1px solid var(--green-border);
-    padding: 3px 10px; border-radius: 4px;
-  }
+/* GESTÕES HORIZONTAIS */
+.gestoes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;margin-bottom:10px}
+.gestao-col{display:flex;flex-direction:column;gap:5px;background:var(--bg);border-radius:var(--radius-sm);padding:10px 8px;min-width:0}
+.gestao-col-label{font-size:8px;font-family:var(--mono);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);text-align:center;padding-bottom:6px;border-bottom:1px solid var(--blue-border);margin-bottom:2px}
+.gestao-col-label.busca{color:var(--amber);border-color:var(--amber-border)}
+.gestao-node{border-radius:var(--radius-sm);border:1px solid var(--blue-border);background:var(--blue-bg);padding:8px 9px;cursor:pointer;transition:transform var(--trans);min-width:0;word-break:break-word}
+.gestao-node:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.gestao-node.amber{border-color:var(--amber-border);background:var(--amber-bg)}
+.gestao-node.ok{border-color:var(--green-border);background:var(--green-bg)}
+.gestao-node-title{font-size:8px;font-weight:600;font-family:var(--mono);color:var(--blue);line-height:1.3;word-break:break-all}
+.gestao-node.amber .gestao-node-title{color:var(--amber)}
+.gestao-node.ok .gestao-node-title{color:var(--green)}
+.gestao-node-sub{font-size:8px;color:var(--muted);margin-top:3px;line-height:1.35}
 
-  /* LAYOUT */
-  .layout {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
+/* PARALLEL LAYOUT */
+.parallel-layout{display:grid;grid-template-columns:1fr 220px;gap:16px;width:100%;align-items:start}
+.parallel-main{display:flex;flex-direction:column;align-items:stretch;gap:0;width:100%;min-width:0}
+.parallel-side{display:flex;flex-direction:column;gap:0;min-width:0}
+.side-label{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.side-label::after{content:'';flex:1;height:1px;background:var(--purple-border)}
+.side-note{font-size:9px;font-family:var(--mono);color:var(--purple);opacity:.7;text-align:center;margin-top:6px;padding:5px 8px;border:1px dashed var(--purple-border);border-radius:var(--radius-sm);background:var(--purple-bg)}
+.connector-side{display:flex;flex-direction:column;align-items:center;gap:2px;margin:2px 0}
+.connector-side-line{width:1.5px;height:18px;background:var(--purple-border)}
+.connector-side-arrow{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--purple-border);margin-top:-3px}
+.feed-arrow{display:flex;align-items:center;justify-content:center;padding:8px 0;font-size:10px;font-family:var(--mono);color:var(--purple);opacity:.7;gap:4px}
+.feed-arrow::before,.feed-arrow::after{content:'';flex:1;height:1px;background:var(--purple-border);opacity:.4}
 
-  /* DIAGRAM AREA */
-  .diagram-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 32px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    transition: margin-right var(--transition);
-  }
+/* AQUISIÇÃO CONTAINER */
+.acq-container{width:100%;max-width:620px;border:1.5px solid var(--purple-border);border-radius:var(--radius);padding:14px;background:var(--purple-bg);position:relative;margin-bottom:4px}
+.acq-label{font-size:10px;font-weight:600;font-family:var(--mono);color:var(--purple);letter-spacing:.06em;text-transform:uppercase;position:absolute;top:-9px;left:14px;background:var(--purple-bg);padding:0 5px}
+.acq-sub{font-size:10px;color:var(--purple);opacity:.7;text-align:center;margin-bottom:10px;margin-top:2px}
+.acq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.acq-item{border-radius:var(--radius-sm);border:1px solid var(--purple-border);background:var(--surface);padding:8px 10px;cursor:pointer;transition:transform var(--trans)}
+.acq-item:hover{transform:translateY(-1px)}
+.acq-item.terminal{border-color:var(--red-border);background:var(--red-bg)}
+.acq-item-title{font-size:10px;font-weight:600;font-family:var(--mono);color:var(--purple)}
+.acq-item.terminal .acq-item-title{color:var(--red)}
+.acq-item-sub{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.4}
+.acq-note{font-size:9px;color:var(--purple);opacity:.7;text-align:center;margin-top:8px;font-family:var(--mono)}
 
-  /* LEGEND */
-  .legend {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 28px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 18px;
-    width: 100%;
-    max-width: 560px;
-  }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
-  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+/* PANEL */
+.detail-panel{width:var(--panel-w);background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;transform:translateX(var(--panel-w));transition:transform var(--trans);position:fixed;right:0;top:57px;bottom:0;z-index:50;display:flex;flex-direction:column}
+.detail-panel.open{transform:translateX(0)}
+.panel-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1}
+.panel-close{position:absolute;top:14px;right:14px;width:26px;height:26px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:background var(--trans)}
+.panel-close:hover{background:var(--bg)}
+.panel-state-id{font-size:9px;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;opacity:.6}
+.panel-title{font-size:15px;font-weight:600;letter-spacing:-.02em}
+.panel-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--mono);border-radius:var(--radius-sm);padding:3px 8px;margin-top:7px;border:1px solid}
+.panel-body{padding:18px 22px;flex:1}
+.panel-section{margin-bottom:18px}
+.panel-section-title{font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.panel-text{font-size:12px;line-height:1.65;color:var(--muted)}
+.panel-text strong{color:var(--text);font-weight:500}
+.tag-list{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:10px;font-family:var(--mono);padding:3px 7px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);color:var(--muted)}
+.alert-list{display:flex;flex-direction:column;gap:5px}
+.alert-item{font-size:11px;display:flex;align-items:flex-start;gap:7px;padding:7px 9px;background:#FFF8F0;border:1px solid #F0C070;border-radius:var(--radius-sm);color:#5A3A00;line-height:1.5}
+.alert-item::before{content:'⚠';font-size:11px;flex-shrink:0;margin-top:1px}
+.sla-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);padding:4px 9px;border-radius:var(--radius-sm);background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);margin-top:4px}
+.hierarchy-list{display:flex;flex-direction:column;gap:4px}
+.hierarchy-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);padding:4px 8px;background:var(--bg);border-radius:var(--radius-sm)}
+.hierarchy-num{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--faint);width:16px;flex-shrink:0}
 
-  /* NODES */
-  .node {
-    width: 100%;
-    max-width: 360px;
-    border-radius: 10px;
-    padding: 14px 20px;
-    cursor: pointer;
-    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-    position: relative;
-    border: 1.5px solid transparent;
-  }
-  .node:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-  .node.active { box-shadow: 0 0 0 3px rgba(0,0,0,0.12); }
-  .node-title { font-size: 13px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; letter-spacing: -0.01em; }
-  .node-sub { font-size: 12px; margin-top: 3px; opacity: 0.75; }
+.panel-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:40px;text-align:center}
+.panel-empty-icon{font-size:28px;opacity:.25}
+.panel-empty-text{font-size:12px;color:var(--faint);line-height:1.5}
 
-  .node-teal   { background: var(--teal-bg);  border-color: var(--teal-border);  color: var(--teal-text); }
-  .node-blue   { background: var(--blue-bg);   border-color: var(--blue-border);  color: var(--blue-text); }
-  .node-green  { background: var(--green-bg);  border-color: var(--green-border); color: var(--green-text); }
-  .node-amber  { background: var(--amber-bg);  border-color: var(--amber-border); color: var(--amber-text); }
-  .node-red    { background: var(--red-bg);    border-color: var(--red-border);   color: var(--red-text); }
-  .node-gray   { background: var(--gray-bg);   border-color: var(--gray-border);  color: var(--gray-text); }
-  .node-coral  { background: var(--coral-bg);  border-color: var(--coral-border); color: var(--coral-text); }
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.12);z-index:40}
+.overlay.show{display:block}
 
-  /* CONNECTOR */
-  .connector {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    margin: 2px 0;
-  }
-  .connector-line {
-    width: 1.5px;
-    height: 22px;
-    background: var(--border-strong);
-  }
-  .connector-label {
-    font-size: 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-faint);
-    letter-spacing: 0.02em;
-    background: var(--bg);
-    padding: 0 4px;
-    position: relative;
-    top: -2px;
-  }
-  .connector-arrow {
-    width: 0; height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 7px solid var(--border-strong);
-    margin-top: -4px;
-  }
-
-  /* PREP CONTAINER */
-  .prep-container {
-    width: 100%;
-    max-width: 560px;
-    border: 1.5px dashed var(--border-strong);
-    border-radius: 12px;
-    padding: 18px 16px 16px;
-    background: var(--surface);
-    position: relative;
-  }
-  .prep-label {
-    font-size: 11px;
-    font-weight: 600;
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--text-muted);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    position: absolute;
-    top: -10px;
-    left: 16px;
-    background: var(--surface);
-    padding: 0 6px;
-  }
-  .prep-sub {
-    font-size: 11px;
-    color: var(--text-faint);
-    text-align: center;
-    margin-bottom: 14px;
-    margin-top: 4px;
-  }
-  .prep-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .prep-grid .node {
-    max-width: 100%;
-    padding: 10px 12px;
-  }
-  .prep-grid .node-title { font-size: 11px; }
-  .prep-grid .node-sub   { font-size: 10px; }
-
-  .prep-divider {
-    display: flex; align-items: center; gap: 8px;
-    margin: 10px 0;
-    font-size: 10px; color: var(--text-faint);
-    font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 0.04em;
-  }
-  .prep-divider::before, .prep-divider::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-
-  /* DETAIL PANEL */
-  .detail-panel {
-    width: var(--panel-w);
-    background: var(--surface);
-    border-left: 1px solid var(--border);
-    overflow-y: auto;
-    transform: translateX(var(--panel-w));
-    transition: transform var(--transition);
-    position: fixed;
-    right: 0; top: 57px; bottom: 0;
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-  }
-  .detail-panel.open { transform: translateX(0); }
-
-  .panel-header {
-    padding: 20px 24px 16px;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    background: var(--surface);
-    z-index: 1;
-  }
-  .panel-close {
-    position: absolute;
-    top: 16px; right: 16px;
-    width: 28px; height: 28px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: transparent;
-    cursor: pointer;
-    font-size: 16px;
-    color: var(--text-muted);
-    display: flex; align-items: center; justify-content: center;
-    transition: background var(--transition);
-  }
-  .panel-close:hover { background: var(--bg); }
-  .panel-state-id {
-    font-size: 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-    opacity: 0.6;
-  }
-  .panel-title { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; }
-  .panel-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-family: 'IBM Plex Mono', monospace;
-    border-radius: 4px;
-    padding: 3px 8px;
-    margin-top: 8px;
-    border: 1px solid;
-  }
-  .panel-body { padding: 20px 24px; flex: 1; }
-  .panel-section { margin-bottom: 20px; }
-  .panel-section-title {
-    font-size: 10px;
-    font-weight: 600;
-    font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 8px;
-  }
-  .panel-text { font-size: 13px; line-height: 1.65; color: var(--text-muted); }
-  .panel-text strong { color: var(--text); font-weight: 500; }
-
-  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag {
-    font-size: 11px;
-    font-family: 'IBM Plex Mono', monospace;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-  }
-
-  .alert-list { display: flex; flex-direction: column; gap: 6px; }
-  .alert-item {
-    font-size: 12px;
-    display: flex; align-items: flex-start; gap: 8px;
-    padding: 8px 10px;
-    background: #FFF8F0;
-    border: 1px solid #F0C070;
-    border-radius: 6px;
-    color: #5A3A00;
-    line-height: 1.5;
-  }
-  .alert-item::before { content: '⚠'; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
-
-  /* EMPTY STATE */
-  .panel-empty {
-    flex: 1;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; padding: 40px;
-    text-align: center;
-  }
-  .panel-empty-icon { font-size: 32px; opacity: 0.3; }
-  .panel-empty-text { font-size: 13px; color: var(--text-faint); line-height: 1.5; }
-
-  /* OVERLAY */
-  .overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.15);
-    z-index: 40;
-  }
-  .overlay.show { display: block; }
-
-  /* FOOTER */
-  .diagram-footer {
-    max-width: 560px;
-    width: 100%;
-    margin-top: 24px;
-    padding: 12px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-  .footer-item { font-size: 11px; color: var(--text-faint); }
-  .footer-item strong { color: var(--text-muted); font-weight: 500; }
+.diagram-footer{max-width:620px;width:100%;margin-top:24px;padding:11px 15px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;gap:20px;flex-wrap:wrap}
+.footer-item{font-size:10px;color:var(--faint)}
+.footer-item strong{color:var(--muted);font-weight:500}
 </style>
 </head>
 <body>
@@ -363,11 +181,11 @@
 <header>
   <div class="header-left">
     <div class="header-title">Máquina de Estados — Ciclo de Vida do Produto</div>
-    <div class="header-meta">V1 · Draft Final · 19 mai 2026 · Centauro &amp; Fisia</div>
+    <div class="header-meta">V1 · Revisada · mai 2026 · Centauro & Fisia</div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <a href="apresentacao-ciclo-vida-sbf.html" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;font-family:'IBM Plex Mono',monospace;color:#6B6963;text-decoration:none;padding:5px 12px;border:1px solid #E2E0DA;border-radius:6px;background:#fff;transition:background .15s" onmouseover="this.style.background='#F7F6F3'" onmouseout="this.style.background='#fff'">← Apresentação</a>
-    <a href="index.html" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;font-family:'IBM Plex Mono',monospace;color:#6B6963;text-decoration:none;padding:5px 12px;border:1px solid #E2E0DA;border-radius:6px;background:#fff;transition:background .15s" onmouseover="this.style.background='#F7F6F3'" onmouseout="this.style.background='#fff'">⊞ Menu principal</a>
+  <div class="header-actions">
+    <a class="nav-btn" href="apresentacao-ciclo-vida-sbf.html">← Apresentação</a>
+    <a class="nav-btn" href="index.html">⊞ Menu</a>
     <span class="header-badge">Clique em qualquer estado</span>
   </div>
 </header>
@@ -375,305 +193,300 @@
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 
 <div class="layout">
-  <div class="diagram-area" id="diagramArea">
+<div class="diagram-area" id="diagramArea">
 
-    <!-- LEGEND -->
-    <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#9FE1CB;border:1px solid #0F6E56"></div>Automática</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#B5D4F4;border:1px solid #185FA5"></div>Manual + Automática</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#FAC775;border:1px solid #854F0B"></div>Manual</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#F5C4B3;border:1px solid #993C1D"></div>Regra especial</div>
-    </div>
-
-    <!-- 1 -->
-    <div class="node node-teal" onclick="openPanel('comercial')">
-      <div class="node-title">EM_CADASTRO_COMERCIAL</div>
-      <div class="node-sub">Cadastro SAP pendente · Área: Comercial</div>
-    </div>
-    <div class="connector">
-      <div class="connector-line"></div>
-      <div class="connector-label">automática</div>
-      <div class="connector-arrow"></div>
-    </div>
-
-    <!-- 2 -->
-    <div class="node node-teal" onclick="openPanel('digital')">
-      <div class="node-title">EM_CADASTRO_DIGITAL</div>
-      <div class="node-sub">Cadastro digital básico · Área: Cadastro Digital</div>
-    </div>
-    <div class="connector">
-      <div class="connector-line"></div>
-      <div class="connector-label">automática</div>
-      <div class="connector-arrow"></div>
-    </div>
-
-    <!-- 3 PREP CONTAINER -->
-    <div class="prep-container" style="max-width:560px">
-      <span class="prep-label">EM_PREPARAÇÃO_DIGITAL</span>
-      <div class="prep-sub">Três gestões em paralelo — etapa mais crítica e demorada</div>
-      <div class="prep-grid">
-        <div class="node node-blue" onclick="openPanel('catalogo')">
-          <div class="node-title">Gestão de catálogo</div>
-          <div class="node-sub">Imagens, vídeos, descrição, atributos</div>
-        </div>
-        <div class="node node-blue" onclick="openPanel('preco')">
-          <div class="node-title">Gestão de preço</div>
-          <div class="node-sub">Preço válido, margem, política comercial</div>
-        </div>
-        <div class="node node-blue" onclick="openPanel('estoque')">
-          <div class="node-title">Gestão de estoque</div>
-          <div class="node-sub">Estoque futurável, margem de segurança</div>
-        </div>
-      </div>
-      <div class="prep-divider">regra especial</div>
-      <div class="node node-coral" style="max-width:100%;padding:10px 14px" onclick="openPanel('margem')">
-        <div class="node-title">BLOQUEADO_MARGEM_SEGURANÇA</div>
-        <div class="node-sub">Estoque físico &gt; 0, digital = 0 → badge "Disponível em breve" + "Avise-me"</div>
-      </div>
-    </div>
-
-    <div class="connector">
-      <div class="connector-line"></div>
-      <div class="connector-label">manual + automática</div>
-      <div class="connector-arrow"></div>
-    </div>
-
-    <!-- 4 -->
-    <div class="node node-green" onclick="openPanel('disponivel')">
-      <div class="node-title">DISPONÍVEL_VENDA_DIGITAL</div>
-      <div class="node-sub">Produto visível e vendável no site (VISIVEL_NO_SITE)</div>
-    </div>
-    <div class="connector">
-      <div class="connector-line"></div>
-      <div class="connector-label">manual</div>
-      <div class="connector-arrow"></div>
-    </div>
-
-    <!-- 5 -->
-    <div class="node node-amber" onclick="openPanel('promocao')">
-      <div class="node-title">EM_PROMOÇÃO</div>
-      <div class="node-sub">Campanhas ativas ou liquidações</div>
-    </div>
-    <div class="connector">
-      <div class="connector-line"></div>
-      <div class="connector-label">manual</div>
-      <div class="connector-arrow"></div>
-    </div>
-
-    <!-- 6 -->
-    <div class="node node-red" onclick="openPanel('bloqueio')">
-      <div class="node-title">EM_BLOQUEIO_COMERCIAL</div>
-      <div class="node-sub">Bloqueio por decisão comercial, risco ou compliance</div>
-    </div>
-    <div class="connector">
-      <div class="connector-line"></div>
-      <div class="connector-label">manual / automática</div>
-      <div class="connector-arrow"></div>
-    </div>
-
-    <!-- 7 -->
-    <div class="node node-gray" onclick="openPanel('desativado')">
-      <div class="node-title">DESATIVADO / ARQUIVADO</div>
-      <div class="node-sub">Após consumo total do último estoque físico</div>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="diagram-footer">
-      <div class="footer-item"><strong>Versão</strong> V1 – Draft Final</div>
-      <div class="footer-item"><strong>Autor</strong> Átila</div>
-      <div class="footer-item"><strong>Plataformas</strong> Centauro &amp; Fisia</div>
-      <div class="footer-item"><strong>Público</strong> Produto, Tech, Cadastro, Pricing, Estoque, Marketing, Comercial</div>
-    </div>
-
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#9FE1CB;border:1px solid #0D7A5F"></div>Automática</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#B5D4F4;border:1px solid #185FA5"></div>Manual + Auto</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FAC775;border:1px solid #B45309"></div>Manual</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C084FC;border:1px solid #6B21A8"></div>Gestão de aquisição</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EF9A9A;border:1px solid #C62828"></div>Terminal</div>
   </div>
 
-  <!-- DETAIL PANEL -->
-  <div class="detail-panel" id="detailPanel">
-    <div class="panel-header">
-      <button class="panel-close" onclick="closePanel()">✕</button>
-      <div class="panel-state-id" id="panelId"></div>
-      <div class="panel-title" id="panelTitle"></div>
-      <div id="panelBadge"></div>
+  <!-- PARALLEL LAYOUT: fluxo digital + aquisição -->
+  <div class="flow-section"><div class="flow-section-label">Ciclo de vida digital · Gestão de aquisição em paralelo</div></div>
+  <div class="parallel-layout">
+
+    <!-- COLUNA PRINCIPAL: fluxo digital -->
+    <div class="parallel-main">
+
+  <!-- ESTADO 1 -->
+  <div class="node node-teal" onclick="openPanel('comercial')">
+    <div class="node-title">EM_CADASTRO_COMERCIAL</div>
+    <div class="node-sub">Cadastro SAP pendente ou incompleto · Área: Comercial</div>
+    <div class="node-tags">
+      <span class="node-tag" style="background:var(--teal-bg);border-color:var(--teal)">automática</span>
     </div>
-    <div class="panel-body" id="panelBody">
-      <div class="panel-empty">
-        <div class="panel-empty-icon">↖</div>
-        <div class="panel-empty-text">Clique em qualquer estado no diagrama para ver os detalhes.</div>
+  </div>
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">automática</div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- ESTADO 2 -->
+  <div class="node node-teal" onclick="openPanel('digital')">
+    <div class="node-title">EM_CADASTRO_DIGITAL</div>
+    <div class="node-sub">Ficha digital inexistente ou em criação · Área: Cadastro Digital</div>
+    <div class="node-tags">
+      <span class="node-tag" style="background:var(--teal-bg);border-color:var(--teal)">automática</span>
+    </div>
+  </div>
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">automática</div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- ESTADO 3 — PREP -->
+  <div class="prep-container" style="width:100%">
+    <span class="prep-label">EM_PREPARAÇÃO_DIGITAL</span>
+    <div class="prep-sub">Quatro gestões em paralelo — etapa mais crítica e demorada</div>
+
+    <!-- 4 GESTÕES EM PARALELO — LAYOUT HORIZONTAL -->
+    <div class="gestoes-grid">
+
+      <!-- Catálogo -->
+      <div class="gestao-col">
+        <div class="gestao-col-label">Catálogo</div>
+        <div class="gestao-node" onclick="openPanel('pendente_midia')">
+          <div class="gestao-node-title">PENDENTE_MIDIA</div>
+          <div class="gestao-node-sub">Falta imagem, vídeo ou mídia mínima</div>
+        </div>
+        <div class="gestao-node" onclick="openPanel('pendente_enriquecimento')">
+          <div class="gestao-node-title">PENDENTE_ENRIQUECIMENTO</div>
+          <div class="gestao-node-sub">Faltam atributos, descrição, specs</div>
+        </div>
+        <div class="gestao-node ok" onclick="openPanel('catalogo_ok')">
+          <div class="gestao-node-title">CATALOGO_OK</div>
+          <div class="gestao-node-sub">Pronto para projeção</div>
+        </div>
       </div>
+
+      <!-- Pricing -->
+      <div class="gestao-col">
+        <div class="gestao-col-label">Pricing</div>
+        <div class="gestao-node" onclick="openPanel('aguardando_preco')">
+          <div class="gestao-node-title">AGUARDANDO_PRECO</div>
+          <div class="gestao-node-sub">Sem preço válido, margem ou política</div>
+        </div>
+        <div class="gestao-node ok" onclick="openPanel('preco_ok')">
+          <div class="gestao-node-title">PRECO_OK</div>
+          <div class="gestao-node-sub">Preço válido para venda</div>
+        </div>
+      </div>
+
+      <!-- Estoque -->
+      <div class="gestao-col">
+        <div class="gestao-col-label">Estoque <span style="font-size:7px;color:var(--purple)">← Aquisição</span></div>
+        <div class="gestao-node" onclick="openPanel('aguardando_recebimento')">
+          <div class="gestao-node-title">AGUARDANDO_RECEBIMENTO</div>
+          <div class="gestao-node-sub">Chegada programada no CD</div>
+        </div>
+        <div class="gestao-node" onclick="openPanel('aguardando_estoque')">
+          <div class="gestao-node-title">AGUARDANDO_ESTOQUE_FATURAVEL</div>
+          <div class="gestao-node-sub">Sem estoque faturável digital</div>
+        </div>
+        <div class="gestao-node ok" onclick="openPanel('estoque_ok')">
+          <div class="gestao-node-title">ESTOQUE_OK</div>
+          <div class="gestao-node-sub">Disponível para projeção</div>
+        </div>
+      </div>
+
+      <!-- Busca -->
+      <div class="gestao-col">
+        <div class="gestao-col-label busca">Busca</div>
+        <div class="gestao-node" onclick="openPanel('aguardando_indexacao')">
+          <div class="gestao-node-title">AGUARDANDO_INDEXACAO</div>
+          <div class="gestao-node-sub">Apto, mas ainda não indexado</div>
+        </div>
+        <div class="gestao-node amber" onclick="openPanel('nao_indexado')">
+          <div class="gestao-node-title">NAO_INDEXADO</div>
+          <div class="gestao-node-sub">Falhou na validação (Tesseract)</div>
+        </div>
+        <div class="gestao-node ok" onclick="openPanel('busca_ok')">
+          <div class="gestao-node-title">BUSCA_OK</div>
+          <div class="gestao-node-sub">Indexado e apto para vitrine</div>
+        </div>
+      </div>
+
+    </div><!-- /gestoes-grid -->
+
+    <!-- Margem -->
+    <div class="prep-divider">regra de transição — entre estado 3 e 4</div>
+    <div class="margem-node" onclick="openPanel('margem')">
+      <div class="margem-title">BLOQUEADO_MARGEM_SEGURANCA</div>
+      <div class="margem-sub">Estoque físico > 0, digital = 0 por política de margem. Produto não aparece no site.</div>
+    </div>
+  </div>
+
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">manual + automática</div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- ESTADO 4 -->
+  <div class="node node-green" style="border-width:2px" onclick="openPanel('disponivel')">
+    <div class="node-title">DISPONIVEL_VENDA_DIGITAL ★</div>
+    <div class="node-sub">Produto visível e vendável no site · VISIVEL_NO_SITE · OBJETIVO ALVO</div>
+    <div class="node-tags">
+      <span class="node-tag" style="background:var(--green-bg);border-color:var(--green)">manual + automática</span>
+      <span class="node-tag" style="background:var(--green-bg);border-color:var(--green)">foco atual</span>
+    </div>
+  </div>
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">manual</div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- ESTADO 5 -->
+  <div class="node node-amber" onclick="openPanel('promocao')">
+    <div class="node-title">EM_PROMOCAO</div>
+    <div class="node-sub">Campanhas ativas ou liquidação</div>
+    <div class="node-tags">
+      <span class="node-tag" style="background:var(--amber-bg);border-color:var(--amber)">EM_PROMOCAO_ATIVA</span>
+      <span class="node-tag" style="background:var(--amber-bg);border-color:var(--amber)">LIQUIDACAO</span>
+    </div>
+  </div>
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">manual</div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- ESTADO 6 -->
+  <div class="node node-red" onclick="openPanel('bloqueio')">
+    <div class="node-title">EM_BLOQUEIO_COMERCIAL</div>
+    <div class="node-sub">Produto travado por decisão, risco ou compliance</div>
+    <div class="node-tags">
+      <span class="node-tag" style="background:var(--red-bg);border-color:var(--red)">BLOQUEADO_PRONTO</span>
+      <span class="node-tag" style="background:var(--red-bg);border-color:var(--red)">BLOQUEADO_RECALL</span>
+      <span class="node-tag" style="background:var(--red-bg);border-color:var(--red)">BLOQUEADO_COMPLIANCE</span>
+    </div>
+  </div>
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">manual / automática</div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- ESTADO 7 -->
+  <div class="node node-gray" onclick="openPanel('desativado')">
+    <div class="node-title">DESATIVADO / ARQUIVADO</div>
+    <div class="node-sub">Estoque zerado + descontinuação confirmada · Estado terminal</div>
+    <div class="node-tags">
+      <span class="node-tag" style="background:var(--gray-bg);border-color:var(--gray)">ARQUIVADO</span>
+      <span class="node-tag" style="background:var(--red-bg);border-color:var(--red)">terminal</span>
+    </div>
+  </div>
+
+    </div><!-- /parallel-main -->
+
+    <!-- COLUNA LATERAL: Gestão de Aquisição -->
+    <div class="parallel-side">
+      <div class="side-label">Gestão de aquisição</div>
+
+      <div class="acq-item" onclick="openPanel('prereserva')" style="border-radius:var(--radius);border:1.5px solid var(--purple-border);background:var(--purple-bg);padding:10px 12px;cursor:pointer;margin-bottom:0">
+        <div class="acq-item-title">PRÉ-RESERVA</div>
+        <div class="acq-item-sub">Marca confirmou que vai vender</div>
+      </div>
+      <div class="connector-side"><div class="connector-side-line"></div><div class="connector-side-arrow"></div></div>
+      <div class="acq-item" onclick="openPanel('agendado')" style="border-radius:var(--radius);border:1.5px solid var(--purple-border);background:var(--purple-bg);padding:10px 12px;cursor:pointer">
+        <div class="acq-item-title">AGENDADO</div>
+        <div class="acq-item-sub">Data de chegada no CD confirmada</div>
+      </div>
+      <div class="connector-side"><div class="connector-side-line"></div><div class="connector-side-arrow"></div></div>
+      <div class="acq-item" onclick="openPanel('recebido')" style="border-radius:var(--radius);border:1.5px solid var(--purple-border);background:var(--purple-bg);padding:10px 12px;cursor:pointer">
+        <div class="acq-item-title">RECEBIDO</div>
+        <div class="acq-item-sub">Entrada no CD</div>
+      </div>
+      <div class="connector-side"><div class="connector-side-line"></div><div class="connector-side-arrow"></div></div>
+      <div class="acq-item terminal" onclick="openPanel('cancelado')" style="border-radius:var(--radius);padding:10px 12px;cursor:pointer">
+        <div class="acq-item-title">CANCELADO</div>
+        <div class="acq-item-sub">Terminal. Novo ID se reabrir.</div>
+      </div>
+
+      <div class="feed-arrow">alimenta estoque ↓</div>
+      <div class="side-note">Pedido de compra criado manualmente pelo Comercial no SAP. Evolução dos status (Pré-Reserva → Agendado → Recebido) automática via integração com a marca. Corre em paralelo ao fluxo digital.</div>
+      <div class="side-note" style="margin-top:6px;border-color:var(--teal-border);color:var(--teal);background:var(--teal-bg)">Fisia: Pré-reserva = Coleção Planejada · Agendado = Grade Confirmada · 4 coleções/ano</div>
+    </div><!-- /parallel-side -->
+
+  </div><!-- /parallel-layout -->
+
+  <div class="diagram-footer">
+    <div class="footer-item"><strong>Versão</strong> V1 Revisada</div>
+    <div class="footer-item"><strong>Autor</strong> Átila</div>
+    <div class="footer-item"><strong>Plataformas</strong> Centauro & Fisia</div>
+    <div class="footer-item"><strong>Público</strong> Produto, Tech, Cadastro, Pricing, Estoque, Busca, Comercial</div>
+  </div>
+
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-header">
+    <button class="panel-close" onclick="closePanel()">✕</button>
+    <div class="panel-state-id" id="panelId"></div>
+    <div class="panel-title" id="panelTitle"></div>
+    <div id="panelBadge"></div>
+  </div>
+  <div class="panel-body" id="panelBody">
+    <div class="panel-empty">
+      <div class="panel-empty-icon">↖</div>
+      <div class="panel-empty-text">Clique em qualquer estado no diagrama para ver os detalhes.</div>
     </div>
   </div>
 </div>
+</div>
 
 <script>
-const states = {
-  comercial: {
-    id: 'ESTADO 1 DE 7',
-    title: 'Em cadastro comercial',
-    badge: { label: 'Transição automática', color: 'teal' },
-    what: 'O produto existe comercialmente — foi negociado, tem código e intenção de venda — mas ainda não passou pela validação mínima necessária no SAP para seguir o fluxo digital.',
-    transition: 'Automática via integração. Assim que o cadastro SAP é concluído e aprovado, o produto avança sozinho para EM_CADASTRO_DIGITAL.',
-    owner: 'Cadastro Comercial — time de interface com fornecedores e alimentação do SAP.',
-    substates: ['Em Cadastro Comercial'],
-    alerts: [
-      'Dados do fornecedor incompletos',
-      'Erro de integração entre o sistema comercial e o SAP',
-      'Produto em negociação ainda não finalizada'
-    ]
-  },
-  digital: {
-    id: 'ESTADO 2 DE 7',
-    title: 'Em cadastro digital',
-    badge: { label: 'Transição automática', color: 'teal' },
-    what: 'O SAP já reconhece o produto, mas o e-commerce ainda não. Este estado cobre a criação da ficha básica na plataforma digital: ID digital, categoria, atributos herdados do SAP.',
-    transition: 'Automática. Assim que o cadastro digital básico é criado com sucesso, o produto avança para EM_PREPARAÇÃO_DIGITAL.',
-    owner: 'Cadastro Digital — time de integração entre ERP e plataforma de e-commerce.',
-    substates: ['Em Cadastro Digital'],
-    alerts: [
-      'Falha na integração SAP → plataforma digital',
-      'Produto sem categoria digital mapeada',
-      'Dados obrigatórios ausentes que impedem a criação da ficha'
-    ]
-  },
-  catalogo: {
-    id: 'PREPARAÇÃO DIGITAL — GESTÃO 1',
-    title: 'Gestão de catálogo',
-    badge: { label: 'Manual + Automática', color: 'blue' },
-    what: 'Responsável por toda a experiência visual e descritiva do produto: imagens principais, vídeos, descrição longa, atributos de ficha técnica e enriquecimento de conteúdo.',
-    transition: 'A saída deste sub-estado depende de validação automática (imagem principal presente, atributos obrigatórios preenchidos) combinada com aprovação manual.',
-    owner: 'Cadastro Digital / Conteúdo.',
-    substates: ['PENDENTE_MIDIA', 'PENDENTE_ENRIQUECIMENTO'],
-    alerts: [
-      'Imagem principal ausente (IMAGEM_PRINCIPAL_AUSENTE)',
-      'Atributos obrigatórios não preenchidos',
-      'Vídeo reprovado na curadoria de conteúdo'
-    ]
-  },
-  preco: {
-    id: 'PREPARAÇÃO DIGITAL — GESTÃO 2',
-    title: 'Gestão de preço',
-    badge: { label: 'Manual + Automática', color: 'blue' },
-    what: 'Garante que o produto tenha um preço válido, dentro da política comercial, com margem aprovada antes de ir ao ar.',
-    transition: 'Automática quando o preço é registrado e validado dentro da política. Pode exigir aprovação manual para casos de margem fora do padrão.',
-    owner: 'Pricing / Comercial.',
-    substates: ['AGUARDANDO_PRECO', 'PRECO_OK'],
-    alerts: [
-      'Preço não cadastrado na política comercial',
-      'Margem abaixo do mínimo aprovado',
-      'Conflito entre preço de custo e preço de venda'
-    ]
-  },
-  estoque: {
-    id: 'PREPARAÇÃO DIGITAL — GESTÃO 3',
-    title: 'Gestão de estoque',
-    badge: { label: 'Manual + Automática', color: 'blue' },
-    what: 'Controla a disponibilidade física e digital do produto: estoque futurável, configuração da margem de segurança e liberação para venda digital.',
-    transition: 'Automática quando o estoque digital é liberado. A margem de segurança pode reter o produto mesmo com estoque físico positivo.',
-    owner: 'Estoque / Supply Chain.',
-    substates: ['AGUARDANDO_RECEBIMENTO', 'ESTOQUE_OK', 'BLOQUEADO_MARGEM_SEGURANCA'],
-    alerts: [
-      'Estoque físico recebido mas digital ainda bloqueado',
-      'Margem de segurança configurada zerada ou incorreta',
-      'Produto sem data de recebimento prevista'
-    ]
-  },
-  margem: {
-    id: 'REGRA ESPECIAL',
-    title: 'Bloqueado — margem de segurança',
-    badge: { label: 'Automática por regra', color: 'coral' },
-    what: 'Ativado quando o estoque físico somado à margem de segurança é maior que zero, mas o estoque digital está zerado. O produto aparece no site com badge "Disponível em breve" e botão "Avise-me quando chegar".',
-    transition: 'Automática — assim que o estoque digital é liberado acima da margem de segurança, o produto avança para DISPONÍVEL_VENDA_DIGITAL.',
-    owner: 'Estoque / Supply Chain.',
-    substates: ['BLOQUEADO_MARGEM_SEGURANCA'],
-    alerts: [
-      'Regra ativa em Centauro e Fisia igualmente',
-      'Produto fica visível no site, mas não vendável',
-      'Gera lista de interessados via "Avise-me"'
-    ]
-  },
-  disponivel: {
-    id: 'ESTADO 4 DE 7',
-    title: 'Disponível — venda digital',
-    badge: { label: 'Manual + Automática', color: 'green' },
-    what: 'O produto está completamente preparado: imagens, preço e estoque validados. Aparece no site como VISIVEL_NO_SITE e pode ser adicionado ao carrinho e comprado.',
-    transition: 'Entrada por combinação de validações automáticas + desbloqueio manual. Saída para EM_PROMOÇÃO (campanha ativada) ou EM_BLOQUEIO_COMERCIAL (decisão manual).',
-    owner: 'Produto Digital / Merchandising.',
-    substates: ['VISIVEL_NO_SITE'],
-    alerts: [
-      'Produto sumiu do site sem motivo → verificar bloqueio automático de estoque',
-      'Preço expirado sem atualização',
-      'Imagem removida pelo sistema de curadoria'
-    ]
-  },
-  promocao: {
-    id: 'ESTADO 5 DE 7',
-    title: 'Em promoção',
-    badge: { label: 'Manual', color: 'amber' },
-    what: 'Produto vinculado a uma campanha ativa — Black Friday, liquidação, oferta relâmpago. Pode ter preço diferenciado, badge visual e regras específicas de estoque.',
-    transition: 'Entrada e saída manuais pelo time de Marketing / Comercial, via plataforma de promoções.',
-    owner: 'Marketing / Comercial.',
-    substates: ['EM_PROMOCAO_ATIVA', 'LIQUIDACAO'],
-    alerts: [
-      'Campanha vencida sem remoção do estado',
-      'Preço promocional abaixo do custo',
-      'Estoque insuficiente para demanda esperada da campanha'
-    ]
-  },
-  bloqueio: {
-    id: 'ESTADO 6 DE 7',
-    title: 'Em bloqueio comercial',
-    badge: { label: 'Manual', color: 'red' },
-    what: 'Bloqueio intencional por decisão comercial, risco jurídico, problema de compliance, recall, ou qualquer outra razão que impeça temporariamente a venda.',
-    transition: 'Entrada e saída manuais. O campo motivo_bloqueio deve sempre ser preenchido.',
-    owner: 'Comercial / Jurídico / Compliance.',
-    substates: ['BLOQUEADO_MANUALMENTE'],
-    alerts: [
-      'Bloqueio sem motivo registrado',
-      'Produto bloqueado há mais de 30 dias sem revisão',
-      'Bloqueio de recall sem comunicação ao time de atendimento'
-    ]
-  },
-  desativado: {
-    id: 'ESTADO 7 DE 7',
-    title: 'Desativado / Arquivado',
-    badge: { label: 'Manual / Automática', color: 'gray' },
-    what: 'Estado final do produto. Só deve ser ativado após o consumo total do último estoque físico e confirmação de parada de produção pelo fornecedor.',
-    transition: 'Manual ou automática (quando o sistema detecta estoque zerado + flag de descontinuação ativa).',
-    owner: 'Produto / Estoque / Comercial.',
-    substates: ['DESATIVADO', 'ARQUIVADO'],
-    alerts: [
-      'Produto arquivado com estoque residual ainda em loja física',
-      'Descontinuação sem comunicação ao time de atendimento',
-      'Produto arquivado indevidamente (deve retornar ao fluxo)'
-    ]
-  }
+const STATES = {
+  prereserva:{id:'GESTÃO DE AQUISIÇÃO · 1',title:'Pré-reserva',badge:{label:'Pedido: manual · Evolução: automática',color:'purple'},what:'A marca confirmou que vai vender o produto. O Comercial cria o pedido de compra no SAP após o cadastro comercial existir — a Gestão de Aquisição corre em paralelo ao fluxo digital, não é pré-requisito para ele. Em Fisia, o equivalente é a Coleção Planejada — confirmação de que aquela coleção Nike estará disponível no período.',transition:'Automática — avança para AGENDADO quando a marca confirma a data de chegada no CD via integração.',owner:'Comercial (criação do pedido) / Integração automática com a marca (evolução dos status).',substates:['PRÉ-RESERVA (Centauro)','COLEÇÃO_PLANEJADA (Fisia)'],alerts:['Produto em pré-reserva há mais de 30 dias sem evolução automática — verificar integração','Falha na integração com a marca impedindo atualização de status'],sla:'Máximo 30 dias sem transição para AGENDADO'},
+  agendado:{id:'GESTÃO DE AQUISIÇÃO · 2',title:'Agendado',badge:{label:'Automática via integração',color:'purple'},what:'A data de chegada do produto no CD foi confirmada pela marca. O produto tem uma janela de recebimento prevista. Em Fisia, o equivalente é a Grade Confirmada — produtos e quantidades da coleção definidos com data de entrega.',transition:'Automática — avança para RECEBIDO quando a entrada física no CD é registrada via integração. Pode ir para CANCELADO automaticamente se a marca cancelar o pedido.',owner:'Integração automática com a marca / Estoque / Supply Chain.',substates:['AGENDADO (Centauro)','GRADE_CONFIRMADA (Fisia)'],alerts:['Data de chegada ultrapassada sem recebimento','Marca comunicou atraso sem nova data','Divergência entre quantidade agendada e grade confirmada'],sla:'Alerta se data prevista ultrapassar sem recebimento'},
+  recebido:{id:'GESTÃO DE AQUISIÇÃO · 3',title:'Recebido',badge:{label:'Automática',color:'teal'},what:'O produto deu entrada física no Centro de Distribuição. Este evento dispara automaticamente o início do fluxo digital — criação do cadastro SAP (EM_CADASTRO_COMERCIAL). É o ponto de conexão entre a jornada de aquisição e o ciclo de vida digital.',transition:'Automática via integração — entrada no CD registrada automaticamente. Alimenta AGUARDANDO_RECEBIMENTO → ESTOQUE_OK na Gestão de Estoque dentro do EM_PREPARAÇÃO_DIGITAL.',owner:'Estoque / Logística.',substates:['RECEBIDO'],alerts:['Entrada no CD sem criação automática do cadastro SAP','Divergência entre quantidade recebida e quantidade agendada']},
+  cancelado:{id:'GESTÃO DE AQUISIÇÃO · TERMINAL',title:'Cancelado',badge:{label:'Automática ou manual · Terminal',color:'red'},what:'O produto não será mais recebido. O cancelamento pode ser automático (marca cancela via integração) ou manual (decisão comercial). Estado terminal — o produto perde a referência. Reativação gera novo ID e novo ciclo do zero.',transition:'Estado terminal. Não há transição para frente. Reativação gera novo ID.',owner:'Comercial / Supply Chain.',substates:['CANCELADO'],alerts:['Produto cancelado com SAP já criado — verificar se o cadastro foi encerrado','Cancelamento sem comunicação ao time de Catálogo']},
+  comercial:{id:'ESTADO 1 DE 7',title:'Em cadastro comercial',badge:{label:'Automática',color:'teal'},what:'O produto foi recebido no CD. O cadastro SAP (EM_CADASTRO_COMERCIAL) já existia previamente — o recebimento alimenta a Gestão de Estoque dentro do EM_PREPARAÇÃO_DIGITAL, movendo o produto de AGUARDANDO_RECEBIMENTO para AGUARDANDO_ESTOQUE_FATURAVEL ou ESTOQUE_OK. Enquanto o cadastro SAP não estiver completo e aprovado corretamente, o produto fica retido aqui. Nenhum sistema digital sabe que ele existe ainda.',transition:'Automática via integração SAP → plataforma digital. Avança para EM_CADASTRO_DIGITAL.',owner:'Cadastro Comercial — time de interface com fornecedores e SAP.',substates:['EM_CADASTRO_COMERCIAL'],alerts:['Dados do fornecedor incompletos no SAP','Erro de integração SAP → plataforma digital','Produto em negociação sem data de conclusão'],sla:'Máximo 48h após recebimento no CD'},
+  digital:{id:'ESTADO 2 DE 7',title:'Em cadastro digital',badge:{label:'Automática',color:'teal'},what:'O SAP reconhece o produto. A plataforma digital recebe os dados básicos e cria a ficha — ID digital, categoria, atributos herdados do SAP. Produto ainda sem conteúdo, preço ou estoque digital.',transition:'Automática. Avança para EM_PREPARAÇÃO_DIGITAL assim que a ficha digital básica é criada.',owner:'Cadastro Digital — integração entre ERP e plataforma de e-commerce.',substates:['EM_CADASTRO_DIGITAL'],alerts:['Falha na integração SAP → plataforma digital','Produto sem categoria digital mapeada','Dados obrigatórios ausentes que impedem criação da ficha'],sla:'Máximo 24h após conclusão do cadastro SAP'},
+  pendente_midia:{id:'ESTADO 3 · CATÁLOGO',title:'Pendente mídia',badge:{label:'Manual + Automática',color:'blue'},what:'O produto não tem as mídias mínimas obrigatórias para ir ao ar. Em Centauro, a produção de imagens é manual — equipe de estúdio. Em Fisia, as imagens vêm via integração automática de repositório Nike — falha aqui indica problema na integração, não ausência de produção.',transition:'Avança para PENDENTE_ENRIQUECIMENTO ou CATALOGO_OK quando as mídias obrigatórias são cadastradas e aprovadas.',owner:'Catálogo / Conteúdo. (Fisia: verificar integração de repositório Nike)',substates:['PENDENTE_MIDIA'],alerts:['IMAGEM_PRINCIPAL_AUSENTE — bloqueio crítico','Vídeo reprovado na curadoria','Fisia: falha na integração do repositório de imagens Nike'],sla:'Centauro: máximo 5 dias úteis · Fisia: máximo 48h (integração automática)'},
+  pendente_enriquecimento:{id:'ESTADO 3 · CATÁLOGO',title:'Pendente enriquecimento',badge:{label:'Manual',color:'blue'},what:'As mídias existem mas faltam atributos qualitativos obrigatórios — descrição, specs técnicas, ficha técnica, atributos de filtro. Sem esses dados o produto não passa pela validação de projeção.',transition:'Avança para CATALOGO_OK quando todos os atributos obrigatórios estão preenchidos e validados.',owner:'Catálogo / Conteúdo.',substates:['PENDENTE_ENRIQUECIMENTO'],alerts:['Atributos obrigatórios de filtro ausentes','Descrição vazia ou abaixo do mínimo de caracteres','Ficha técnica incompleta'],sla:'Máximo 3 dias úteis após mídias aprovadas'},
+  catalogo_ok:{id:'ESTADO 3 · CATÁLOGO',title:'Catálogo OK',badge:{label:'Automática',color:'blue'},what:'Toda a preparação de catálogo está concluída — mídias aprovadas, atributos preenchidos, ficha técnica completa. O produto está pronto pela perspectiva de conteúdo.',transition:'Aguarda PRECO_OK e ESTOQUE_OK para avançar para a Gestão de Busca.',owner:'Catálogo / Conteúdo.',substates:['CATALOGO_OK'],alerts:['Imagem expirada ou removida após aprovação','Atributo obrigatório removido por reconfiguração de categoria']},
+  aguardando_preco:{id:'ESTADO 3 · PRICING',title:'Aguardando preço',badge:{label:'Manual',color:'blue'},what:'O produto não tem preço válido cadastrado — pode ser preço ausente, margem inválida ou fora da política comercial. Sem preço o produto não pode ir ao ar.',transition:'Avança para PRECO_OK quando o preço é cadastrado e validado dentro da política.',owner:'Pricing / Comercial.',substates:['AGUARDANDO_PRECO'],alerts:['Preço não cadastrado na política comercial','Margem abaixo do mínimo aprovado','Conflito entre custo e preço de venda'],sla:'Máximo 3 dias úteis após cadastro digital',hierarchy:'Motivo 1 na hierarquia de bloqueio — maior prioridade diagnóstica'},
+  preco_ok:{id:'ESTADO 3 · PRICING',title:'Preço OK',badge:{label:'Automática',color:'blue'},what:'Preço válido cadastrado e dentro da política comercial. O produto está liberado pela perspectiva de pricing.',transition:'Aguarda CATALOGO_OK e ESTOQUE_OK.',owner:'Pricing / Comercial.',substates:['PRECO_OK'],alerts:['Preço expirado sem renovação','Política comercial atualizada invalidando preço existente']},
+  aguardando_recebimento:{id:'ESTADO 3 · ESTOQUE',title:'Aguardando recebimento',badge:{label:'Informativo',color:'blue'},what:'O produto tem uma data de recebimento programada no CD — o agendamento já foi feito na Gestão de Aquisição. Diferente de AGUARDANDO_ESTOQUE_FATURAVEL: aqui sabemos quando vai chegar; lá, não sabemos.',transition:'Avança automaticamente para AGUARDANDO_ESTOQUE_FATURAVEL ou ESTOQUE_OK quando o produto é recebido e processado no CD.',owner:'Estoque / Supply Chain.',substates:['AGUARDANDO_RECEBIMENTO'],alerts:['Data de recebimento ultrapassada sem entrada no CD','Quantidade recebida abaixo do mínimo para venda digital']},
+  aguardando_estoque:{id:'ESTADO 3 · ESTOQUE',title:'Aguardando estoque faturável',badge:{label:'Automática',color:'blue'},what:'O produto está no CD mas ainda não tem estoque faturável digital disponível — pode estar em processo de conferência, separação ou bloqueio de qualidade.',transition:'Avança para ESTOQUE_OK quando o estoque faturável digital é liberado.',owner:'Estoque / Operações.',substates:['AGUARDANDO_ESTOQUE_FATURAVEL'],alerts:['Produto em CD há mais de 48h sem estoque faturável liberado','Bloqueio de qualidade sem previsão de resolução'],sla:'Máximo 48h após recebimento no CD'},
+  estoque_ok:{id:'ESTADO 3 · ESTOQUE',title:'Estoque OK',badge:{label:'Automática',color:'blue'},what:'Estoque faturável digital disponível. O produto está liberado pela perspectiva de estoque.',transition:'Aguarda CATALOGO_OK e PRECO_OK. Quando os três estão OK → segue para Gestão de Busca.',owner:'Estoque / Operações.',substates:['ESTOQUE_OK'],alerts:['Estoque zerado por venda antes da projeção','Margem de segurança bloqueando o estoque digital']},
+  aguardando_indexacao:{id:'ESTADO 3 · BUSCA',title:'Aguardando indexação',badge:{label:'Automática',color:'blue'},what:'Catálogo, Preço e Estoque estão todos OK. O produto está apto mas ainda não foi indexado pelo sistema de busca. É uma fila de processamento — normalmente rápido mas pode acumular em picos.',transition:'Avança para BUSCA_OK após indexação bem-sucedida. Vai para NAO_INDEXADO se falhar na validação.',owner:'Busca / Tech.',substates:['AGUARDANDO_INDEXACAO'],alerts:['Produto na fila de indexação há mais de 2h','Pico de fila causando atraso generalizado'],sla:'Máximo 2h em condições normais'},
+  nao_indexado:{id:'ESTADO 3 · BUSCA',title:'Não indexado',badge:{label:'Requer ação',color:'amber'},what:'O produto falhou em alguma validação de projeção — tipicamente via Tesseract. É o segundo motivo mais crítico na hierarquia de bloqueio (depois de preço). Em Centauro inclui validações de dimensão. Em Fisia a aplicação via Tesseract está sendo confirmada.',transition:'Requer investigação e correção. Volta para AGUARDANDO_INDEXACAO após correção.',owner:'Busca / Tech. (Centauro: time Seios / Carlos · ponte: Pimentel)',substates:['NAO_INDEXADO'],alerts:['Produto travado por validação Tesseract — verificar dimensões','Catalog_block não deve aparecer como motivo final — investigar causa raiz'],hierarchy:'Motivo 2 na hierarquia de bloqueio (após preço, antes de OMS/mídia)'},
+  busca_ok:{id:'ESTADO 3 · BUSCA',title:'Busca OK',badge:{label:'Automática',color:'blue'},what:'Produto indexado e apto para aparecer nos resultados de busca e na vitrine digital. Todas as quatro gestões estão OK — o produto está pronto para ser liberado para venda.',transition:'Combinação de validações automáticas + desbloqueio manual pelo time Comercial → DISPONIVEL_VENDA_DIGITAL.',owner:'Busca / Tech.',substates:['BUSCA_OK'],alerts:['Produto saiu do índice sem motivo registrado']},
+  margem:{id:'REGRA DE TRANSIÇÃO · 3→4',title:'Bloqueado — margem de segurança',badge:{label:'Automática por regra',color:'coral'},what:'Todas as preparações estão concluídas, mas o estoque digital está zerado por política de margem de segurança — o estoque físico existe mas não está disponível digitalmente. O produto não aparece no site. Não é uma pendência de preparação — é uma trava de política entre os estados 3 e 4.',transition:'Automática: liberado quando o estoque digital supera a margem de segurança configurada → DISPONIVEL_VENDA_DIGITAL.',owner:'Estoque / Supply Chain.',substates:['BLOQUEADO_MARGEM_SEGURANCA'],alerts:['Margem de segurança configurada incorretamente (zero ou valor incoerente)','Produto com alto potencial de venda retido por margem excessiva']},
+  disponivel:{id:'ESTADO 4 DE 7 · OBJETIVO ALVO',title:'Disponível — venda digital',badge:{label:'Foco atual do épico',color:'green'},what:'Todas as validações passaram — catálogo, preço, estoque e busca. O produto está visível no site e pode ser adicionado ao carrinho e comprado. Receita sendo gerada.',transition:'Entrada por combinação de validações automáticas + desbloqueio manual pelo Comercial. Saída para EM_PROMOÇÃO ou EM_BLOQUEIO_COMERCIAL.',owner:'Produto Digital / Merchandising / Comercial.',substates:['VISIVEL_NO_SITE'],alerts:['Produto sumiu do site sem motivo → verificar bloqueio automático de estoque','Preço expirado sem atualização','Inconsistência Stock API (produto órfão)','Produto faturado mas não vendável — investigar status'],sla:'KPI principal: % de SKUs neste estado sobre total com estoque'},
+  promocao:{id:'ESTADO 5 DE 7',title:'Em promoção',badge:{label:'Manual',color:'amber'},what:'Produto vinculado a uma campanha ativa — Black Friday, liquidação, oferta relâmpago. Preço diferenciado, badge visual e regras específicas de estoque por campanha.',transition:'Entrada e saída manuais pelo time de Marketing / Comercial.',owner:'Marketing / Comercial.',substates:['EM_PROMOCAO_ATIVA','LIQUIDACAO'],alerts:['Campanha vencida sem remoção do estado','Preço promocional abaixo do custo','Estoque insuficiente para demanda da campanha']},
+  bloqueio:{id:'ESTADO 6 DE 7',title:'Em bloqueio comercial',badge:{label:'Manual',color:'red'},what:'Bloqueio intencional com três motivações distintas: BLOQUEADO_PRONTO (produto pronto mas travado por decisão comercial consciente — o motivo mais frequente), BLOQUEADO_RECALL (problema de qualidade/segurança), BLOQUEADO_COMPLIANCE (impedimento jurídico ou regulatório). Cada sub-estado tem SLA e responsável diferente.',transition:'Entrada e saída manuais. Motivo obrigatório deve ser registrado. Bloqueio sem motivo gera alerta automático.',owner:'Comercial (Pronto) / Qualidade (Recall) / Jurídico (Compliance).',substates:['BLOQUEADO_PRONTO','BLOQUEADO_RECALL','BLOQUEADO_COMPLIANCE'],alerts:['Bloqueio sem motivo registrado → alerta imediato','BLOQUEADO_PRONTO há mais de 15 dias sem revisão','BLOQUEADO_RECALL sem comunicação ao time de Atendimento'],sla:'BLOQUEADO_PRONTO: revisão obrigatória a cada 15 dias'},
+  desativado:{id:'ESTADO 7 DE 7 · TERMINAL',title:'Desativado / Arquivado',badge:{label:'Manual / Automática',color:'gray'},what:'Estado final do ciclo de vida digital. Ativado somente após consumo total do estoque físico E confirmação de descontinuação pelo fornecedor. Estado terminal — produto não retorna ao fluxo.',transition:'Manual ou automática (estoque zerado + flag de descontinuação). Reativação exige novo ID.',owner:'Produto / Estoque / Comercial.',substates:['ARQUIVADO'],alerts:['Produto arquivado com estoque residual em loja física','Descontinuação sem comunicação ao Atendimento','Produto arquivado indevidamente — deve retornar ao fluxo']}
 };
 
-const badgeColors = {
-  teal:  { bg: '#E1F5EE', border: '#0F6E56', color: '#085041' },
-  blue:  { bg: '#E6F1FB', border: '#185FA5', color: '#0C447C' },
-  green: { bg: '#EAF3DE', border: '#3B6D11', color: '#27500A' },
-  amber: { bg: '#FAEEDA', border: '#854F0B', color: '#633806' },
-  red:   { bg: '#FCEBEB', border: '#A32D2D', color: '#791F1F' },
-  gray:  { bg: '#F1EFE8', border: '#5F5E5A', color: '#444441' },
-  coral: { bg: '#FAECE7', border: '#993C1D', color: '#712B13' }
+const COLORS={
+  teal:{bg:'#E6F5F0',border:'#0D7A5F',color:'#085041'},
+  blue:{bg:'#E6F1FB',border:'#185FA5',color:'#0C447C'},
+  green:{bg:'#E8F5E9',border:'#2E7D32',color:'#1B5E20'},
+  amber:{bg:'#FEF3C7',border:'#B45309',color:'#78350F'},
+  red:{bg:'#FDECEA',border:'#C62828',color:'#7F1D1D'},
+  gray:{bg:'#ECEFF1',border:'#546E7A',color:'#263238'},
+  purple:{bg:'#F3E8FF',border:'#6B21A8',color:'#4A044E'},
+  coral:{bg:'#FAECE7',border:'#993C1D',color:'#712B13'}
 };
 
-function openPanel(key) {
-  const s = states[key];
-  if (!s) return;
-  const c = badgeColors[s.badge.color];
-
-  document.getElementById('panelId').textContent = s.id;
-  document.getElementById('panelTitle').textContent = s.title;
-  document.getElementById('panelBadge').innerHTML = `
-    <span class="panel-badge" style="background:${c.bg};border-color:${c.border};color:${c.color}">
-      ${s.badge.label}
-    </span>`;
-
-  const alertsHtml = s.alerts.map(a => `<div class="alert-item">${a}</div>`).join('');
-  const tagsHtml = s.substates.map(t => `<span class="tag">${t}</span>`).join('');
-
-  document.getElementById('panelBody').innerHTML = `
+function openPanel(key){
+  const s=STATES[key];
+  if(!s)return;
+  const c=COLORS[s.badge.color]||COLORS.blue;
+  document.getElementById('panelId').textContent=s.id;
+  document.getElementById('panelTitle').textContent=s.title;
+  document.getElementById('panelBadge').innerHTML=`<span class="panel-badge" style="background:${c.bg};border-color:${c.border};color:${c.color}">${s.badge.label}</span>`;
+  
+  let html=`
     <div class="panel-section">
       <div class="panel-section-title">O que acontece aqui</div>
       <div class="panel-text">${s.what}</div>
@@ -685,22 +498,20 @@ function openPanel(key) {
     <div class="panel-section">
       <div class="panel-section-title">Área responsável</div>
       <div class="panel-text">${s.owner}</div>
-    </div>
-    <div class="panel-section">
-      <div class="panel-section-title">Sub-estados</div>
-      <div class="tag-list">${tagsHtml}</div>
-    </div>
-    <div class="panel-section">
-      <div class="panel-section-title">Sinais de alerta</div>
-      <div class="alert-list">${alertsHtml}</div>
-    </div>
-  `;
+    </div>`;
 
+  if(s.sla){html+=`<div class="panel-section"><div class="panel-section-title">SLA</div><div class="sla-badge">⏱ ${s.sla}</div></div>`;}
+  if(s.hierarchy){html+=`<div class="panel-section"><div class="panel-section-title">Hierarquia de diagnóstico</div><div class="panel-text" style="font-family:var(--mono);font-size:11px">${s.hierarchy}</div></div>`;}
+
+  html+=`<div class="panel-section"><div class="panel-section-title">Sub-estados / etapas</div><div class="tag-list">${s.substates.map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>`;
+  html+=`<div class="panel-section"><div class="panel-section-title">Sinais de alerta</div><div class="alert-list">${s.alerts.map(a=>`<div class="alert-item">${a}</div>`).join('')}</div></div>`;
+
+  document.getElementById('panelBody').innerHTML=html;
   document.getElementById('detailPanel').classList.add('open');
   document.getElementById('overlay').classList.add('show');
 }
 
-function closePanel() {
+function closePanel(){
   document.getElementById('detailPanel').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
 }
